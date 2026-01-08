@@ -71,7 +71,7 @@
         }
         .disclaimer-box span { margin-right: 10px; font-size: 1.2rem; }
 
-        /* CONTROLS GRID */
+        /* CONTROLS */
         .controls-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -97,39 +97,17 @@
         .form-control:focus { border-color: var(--upc-red); background-color: white; outline: none; }
         .form-control:disabled { background-color: #eee; color: #999; cursor: not-allowed; }
 
-        /* --- NEW: CREDIT SELECTOR BAR (1-11) --- */
-        .credit-bar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap; /* Para que no se rompa en móviles muy pequeños */
-        }
-        
+        /* CREDIT BAR (1-11) */
+        .credit-bar { display: flex; gap: 8px; flex-wrap: wrap; }
         .credit-btn {
-            flex: 1; /* Todos del mismo ancho */
-            min-width: 35px;
-            padding: 12px 5px;
-            background-color: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            flex: 1; min-width: 35px; padding: 12px 5px; background-color: white;
+            border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Montserrat', sans-serif;
+            font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.2s;
         }
-
-        .credit-btn:hover {
-            border-color: #bbb;
-            background-color: #f9f9f9;
-            transform: translateY(-2px);
-        }
-
+        .credit-btn:hover { border-color: #bbb; background-color: #f9f9f9; transform: translateY(-2px); }
         .credit-btn.active {
-            background-color: var(--upc-red);
-            color: white;
-            border-color: var(--upc-red);
+            background-color: var(--upc-red); color: white; border-color: var(--upc-red);
             box-shadow: 0 4px 10px rgba(211, 16, 16, 0.3);
-            transform: translateY(-1px);
         }
 
         /* AUTOCOMPLETE */
@@ -143,69 +121,37 @@
         .autocomplete-active { background-color: var(--upc-red) !important; color: #ffffff !important; }
         .helper-text { font-size: 0.75rem; color: var(--upc-red); margin-top: 5px; font-weight: 600; display: none; }
 
-        /* BUTTONS AREA */
-        .buttons-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
+        /* BUTTONS */
+        .buttons-row { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 10px; }
         .btn-base {
             border: none; padding: 18px 20px; font-size: 1.1rem; font-weight: 700;
             border-radius: 10px; cursor: pointer; width: 100%; transition: all 0.3s;
             text-transform: uppercase; letter-spacing: 1px; color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        
         .btn-calc { background-color: var(--text-dark); }
         .btn-calc:hover { background-color: black; transform: translateY(-3px); }
-
         .btn-reset { background-color: var(--reset-grey); font-size: 1rem; }
         .btn-reset:hover { background-color: var(--reset-grey-dark); transform: translateY(-3px); }
 
-        /* COPY BUTTONS CONTAINER */
-        .btn-copy-container {
-            margin-top: 30px;
-            display: none;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        /* COPY BUTTONS */
+        .btn-copy-container { margin-top: 30px; display: none; gap: 15px; justify-content: center; flex-wrap: wrap; }
         .btn-action {
             border: none; padding: 12px 25px; border-radius: 50px; font-weight: 700;
             cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center;
-            gap: 8px; transition: all 0.2s; color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            gap: 8px; transition: all 0.2s; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
-
         .btn-whatsapp { background-color: var(--whatsapp-green); }
         .btn-whatsapp:hover { background-color: var(--whatsapp-dark); transform: translateY(-2px); }
-
         .btn-text-copy { background-color: var(--copy-blue); }
         .btn-text-copy:hover { background-color: var(--copy-blue-dark); transform: translateY(-2px); }
 
-        /* RESULTS SECTION */
+        /* RESULTS */
         #resultsSection { display: none; margin-top: 50px; border-top: 1px solid #eee; padding-top: 40px; }
-
-        /* CAPTURE TARGET STYLE */
-        .results-wrapper-card {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #f0f0f0;
-        }
-
-        .results-container {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 40px;
-        }
-
+        .results-wrapper-card { background-color: white; padding: 25px; border-radius: 12px; border: 1px solid #f0f0f0; }
+        .results-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
         .card-title { font-size: 1.2rem; font-weight: 800; color: var(--upc-red); margin-bottom: 25px; padding-bottom: 12px; border-bottom: 2px solid #eee; }
 
-        /* Installment Cards */
         .installment-cards { display: grid; gap: 15px; }
         .inst-row { display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #e0e0e0; padding: 18px 25px; border-radius: 12px; }
         .inst-row.total { background-color: var(--text-dark); color: white; border-color: var(--text-dark); }
@@ -215,52 +161,32 @@
         .inst-row.total .inst-date { color: #ccc; }
         .inst-amount { font-size: 1.3rem; font-weight: 700; }
 
-        /* Summary */
         .summary-list { background-color: var(--accent-bg); padding: 30px; border-radius: 16px; border: 1px solid #eee; }
         .summary-item { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 0.95rem; border-bottom: 1px dashed #ddd; padding-bottom: 10px; }
         .summary-item:last-child { border-bottom: none; margin-bottom: 0; }
         .summary-label { color: var(--text-light); font-weight: 500; }
         .summary-val { font-weight: 700; color: var(--text-dark); text-align: right; }
         
-        /* Highlight Total */
         .total-highlight { 
-            margin-top: 25px; 
-            padding: 20px; 
-            border-radius: 8px;
-            background-color: var(--upc-red-light);
-            border: 1px solid #ffcccc;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+            margin-top: 25px; padding: 20px; border-radius: 8px; background-color: var(--upc-red-light);
+            border: 1px solid #ffcccc; display: flex; justify-content: space-between; align-items: center; 
         }
         .total-highlight .summary-label { font-size: 1.1rem; font-weight: 800; color: var(--upc-red); }
         .total-highlight .summary-val { font-size: 1.8rem; font-weight: 900; color: var(--upc-red); }
 
-        /* WARNING FOOTER */
+        /* --- UPDATED WARNING FOOTER --- */
         .warning-footer {
-            margin-top: 25px;
-            padding: 15px;
-            background-color: #fafafa;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            color: #666;
-            text-align: center;
-            line-height: 1.5;
-            border: 1px solid #eee;
+            margin-top: 25px; padding: 15px; background-color: #fafafa; border-radius: 8px;
+            font-size: 0.72rem; color: #666; text-align: center; line-height: 1.5; border: 1px solid #eee;
         }
-        .warning-footer strong { color: #e65100; font-weight: 800; }
-        .warning-link { color: #333; font-weight: 700; text-decoration: underline; }
-        
-        .timestamp-footer {
-            text-align: right; font-size: 0.6rem; color: #aaa; margin-top: 8px; font-family: monospace;
-        }
+        .warning-footer strong { color: var(--upc-red); font-weight: 800; }
+        .warning-link { color: #0084ff; font-weight: 700; text-decoration: underline; cursor: pointer; }
 
-        /* FOOTER PAGE */
+        .timestamp-footer { text-align: right; font-size: 0.6rem; color: #aaa; margin-top: 8px; font-family: monospace; }
+
         .footer { margin-top: 60px; text-align: center; border-top: 1px solid #eee; padding-top: 40px; }
         .signature { display: inline-block; padding: 12px 25px; background-color: #fff; border: 1px solid #e0e0e0; border-radius: 50px; font-size: 0.9rem; color: var(--text-light); margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .signature strong { color: var(--text-dark); }
-        .legal-small { font-size: 0.75rem; color: #999; max-width: 650px; margin: 0 auto; }
-        .legal-small a { color: var(--upc-red); text-decoration: none; font-weight: 600; }
 
         @media (max-width: 768px) {
             .results-container { grid-template-columns: 1fr; }
@@ -305,7 +231,6 @@
             <div class="form-group">
                 <label>3. Elige los Créditos</label>
                 <input type="hidden" id="creditsInput">
-                
                 <div class="credit-bar" id="creditBar">
                     <button class="credit-btn" onclick="selectCredit(1, this)">1</button>
                     <button class="credit-btn" onclick="selectCredit(2, this)">2</button>
@@ -328,10 +253,8 @@
         </div>
 
         <div id="resultsSection">
-            
             <div id="captureTarget" class="results-wrapper-card">
                 <div class="results-container">
-                    
                     <div>
                         <div class="card-title">Cronograma de Pagos</div>
                         <div class="installment-cards">
@@ -397,18 +320,14 @@
                 </div>
 
                 <div class="warning-footer">
-                    <strong>⚠️ IMPORTANTE:</strong> Este simulador es una herramienta referencial y <u>no representa una liquidación oficial</u>. Los montos mostrados asumen pagos puntuales. Los pagos realizados fuera de fecha generan intereses moratorios y gastos administrativos. Para información oficial, por favor consulte en <span class="warning-link">Explora.upc.edu.pe</span>.
+                    <strong>⚠️ IMPORTANTE:</strong> La información es referencial. Los pagos fuera de fecha generan intereses y gastos administrativos, los cuales se aplicarán desde la segunda boleta en el período de verano. Para más información, visita <a href="https://explora.upc.edu.pe" target="_blank" class="warning-link">explora.upc.edu.pe</a>.
                 </div>
                 <div class="timestamp-footer" id="generatedDate"></div>
             </div>
 
             <div id="copyContainer" class="btn-copy-container">
-                <button id="copyImgBtn" class="btn-action btn-whatsapp">
-                    📸 Copiar Imagen
-                </button>
-                <button id="copyTextBtn" class="btn-action btn-text-copy">
-                    📝 Copiar Texto
-                </button>
+                <button id="copyImgBtn" class="btn-action btn-whatsapp">📸 Copiar Imagen</button>
+                <button id="copyTextBtn" class="btn-action btn-text-copy">📝 Copiar Texto</button>
             </div>
         </div>
 
@@ -416,21 +335,14 @@
             <div class="signature">
                 &copy; 2026 Desarrollado por <strong>José Carranza</strong> 👨‍💻
             </div>
-            <div class="legal-small">
-                Herramienta interna.<br>
-                Verificar información en <a href="https://explora.upc.edu.pe" target="_blank">Explora UPC</a>.
-            </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    // --- 1. CONFIGURACIÓN ---
     const MATRICULA = 182.50;
     const MAX_CREDITS = 11;
 
-    // Tablas de precios
     const pricingTables = {
         'medicina': { cats: { 'A': 1735, 'B': 1548, 'C': 1302, 'D': 1206, 'H': 1207 }, name: "Medicina" },
         'musica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, name: "Música" },
@@ -448,55 +360,9 @@
     };
 
     const allCareers = [
-        { name: "Medicina", key: "medicina" },
-        { name: "Música", key: "musica" },
-        { name: "Administración", key: "grupo_negocios_ing" },
-        { name: "Administración y Finanzas", key: "grupo_negocios_ing" },
-        { name: "Administración y Marketing", key: "grupo_negocios_ing" },
-        { name: "Administración y Negocios Internacionales", key: "grupo_negocios_ing" },
-        { name: "Administración y Recursos Humanos", key: "grupo_negocios_ing" },
-        { name: "Contabilidad y Administración", key: "grupo_negocios_ing" },
-        { name: "Ingeniería Industrial", key: "grupo_negocios_ing" },
-        { name: "Ingeniería de Sistemas de Información", key: "grupo_negocios_ing" },
-        { name: "Ingeniería de Software", key: "grupo_negocios_ing" },
-        { name: "Ingeniería Mecatrónica", key: "grupo_negocios_ing" },
-        { name: "Ingeniería Electrónica", key: "grupo_negocios_ing" },
-        { name: "Ingeniería Ambiental", key: "grupo_negocios_ing" },
-        { name: "Ciencias de la Computación", key: "grupo_negocios_ing" },
-        { name: "Ingeniería Biomédica", key: "grupo_salud_ing" },
-        { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing" },
-        { name: "Odontología", key: "grupo_salud_ing" },
-        { name: "Nutrición y Dietética", key: "grupo_salud_ing" },
-        { name: "Arquitectura", key: "arquitectura" },
-        { name: "Medicina Veterinaria", key: "veterinaria" },
-        { name: "Diseño y Gestión en Moda", key: "moda" },
-        { name: "Biología", key: "biologia" },
-        { name: "Terapia Física", key: "terapia_fisica" },
-        { name: "Ingeniería Civil", key: "ing_civil" },
-        { name: "Derecho", key: "derecho" },
-        { name: "Enfermería", key: "enfermeria" },
-        { name: "Comunicación y Periodismo", key: "otras_carreras" },
-        { name: "Comunicación y Publicidad", key: "otras_carreras" },
-        { name: "Comunicación Audiovisual y Medios Interactivos", key: "otras_carreras" },
-        { name: "Comunicación e Imagen Empresarial", key: "otras_carreras" },
-        { name: "Comunicación y Marketing", key: "otras_carreras" },
-        { name: "Comunicación y Fotografía", key: "otras_carreras" },
-        { name: "Psicología", key: "otras_carreras" },
-        { name: "Economía y Finanzas", key: "otras_carreras" },
-        { name: "Economía y Negocios Internacionales", key: "otras_carreras" },
-        { name: "Economía Gerencial", key: "otras_carreras" },
-        { name: "Traducción e Interpretación Profesional", key: "otras_carreras" },
-        { name: "Educación y Gestión del Aprendizaje", key: "otras_carreras" },
-        { name: "Diseño Profesional Gráfico", key: "otras_carreras" },
-        { name: "Diseño Profesional de Interiores", key: "otras_carreras" },
-        { name: "Gastronomía y Gestión Culinaria", key: "otras_carreras" },
-        { name: "Hotelería y Administración", key: "otras_carreras" },
-        { name: "Turismo y Administración", key: "otras_carreras" },
-        { name: "Relaciones Internacionales", key: "otras_carreras" },
-        { name: "Artes Escénicas", key: "otras_carreras" }
+        { name: "Medicina", key: "medicina" }, { name: "Música", key: "musica" }, { name: "Administración", key: "grupo_negocios_ing" }, { name: "Administración y Finanzas", key: "grupo_negocios_ing" }, { name: "Administración y Marketing", key: "grupo_negocios_ing" }, { name: "Administración y Negocios Internacionales", key: "grupo_negocios_ing" }, { name: "Administración y Recursos Humanos", key: "grupo_negocios_ing" }, { name: "Contabilidad y Administración", key: "grupo_negocios_ing" }, { name: "Ingeniería Industrial", key: "grupo_negocios_ing" }, { name: "Ingeniería de Sistemas de Información", key: "grupo_negocios_ing" }, { name: "Ingeniería de Software", key: "grupo_negocios_ing" }, { name: "Ingeniería Mecatrónica", key: "grupo_negocios_ing" }, { name: "Ingeniería Electrónica", key: "grupo_negocios_ing" }, { name: "Ingeniería Ambiental", key: "grupo_negocios_ing" }, { name: "Ciencias de la Computación", key: "grupo_negocios_ing" }, { name: "Ingeniería Biomédica", key: "grupo_salud_ing" }, { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing" }, { name: "Odontología", key: "grupo_salud_ing" }, { name: "Nutrición y Dietética", key: "grupo_salud_ing" }, { name: "Arquitectura", key: "arquitectura" }, { name: "Medicina Veterinaria", key: "veterinaria" }, { name: "Diseño y Gestión en Moda", key: "moda" }, { name: "Biología", key: "biologia" }, { name: "Terapia Física", key: "terapia_fisica" }, { name: "Ingeniería Civil", key: "ing_civil" }, { name: "Derecho", key: "derecho" }, { name: "Enfermería", key: "enfermeria" }, { name: "Comunicación y Periodismo", key: "otras_carreras" }, { name: "Comunicación y Publicidad", key: "otras_carreras" }, { name: "Comunicación Audiovisual y Medios Interactivos", key: "otras_carreras" }, { name: "Comunicación e Imagen Empresarial", key: "otras_carreras" }, { name: "Comunicación y Marketing", key: "otras_carreras" }, { name: "Comunicación y Fotografía", key: "otras_carreras" }, { name: "Psicología", key: "otras_carreras" }, { name: "Economía y Finanzas", key: "otras_carreras" }, { name: "Economía y Negocios Internacionales", key: "otras_carreras" }, { name: "Economía Gerencial", key: "otras_carreras" }, { name: "Traducción e Interpretación Profesional", key: "otras_carreras" }, { name: "Educación y Gestión del Aprendizaje", key: "otras_carreras" }, { name: "Diseño Profesional Gráfico", key: "otras_carreras" }, { name: "Diseño Profesional de Interiores", key: "otras_carreras" }, { name: "Gastronomía y Gestión Culinaria", key: "otras_carreras" }, { name: "Hotelería y Administración", key: "otras_carreras" }, { name: "Turismo y Administración", key: "otras_carreras" }, { name: "Relaciones Internacionales", key: "otras_carreras" }, { name: "Artes Escénicas", key: "otras_carreras" }
     ];
 
-    // --- 2. ELEMENTOS ---
     const careerInput = document.getElementById('careerInput');
     const autocompleteList = document.getElementById('autocomplete-list');
     const categorySelect = document.getElementById('categorySelect');
@@ -512,284 +378,115 @@
     let currentPricingKey = null;
     let currentFocus = -1;
 
-    // --- 3. LÓGICA AUTOCOMPLETE ---
-    function normalizeString(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-    }
+    function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
-    careerInput.addEventListener('input', function(e) {
-        const val = this.value;
-        closeAllLists();
-        resetUIState(); 
-
-        if (!val) return;
-
-        currentFocus = -1;
-        const cleanVal = normalizeString(val);
+    careerInput.addEventListener('input', function() {
+        closeAllLists(); resetUIState();
+        const val = this.value; if (!val) return;
+        currentFocus = -1; const cleanVal = normalizeString(val);
         const matches = allCareers.filter(c => normalizeString(c.name).includes(cleanVal));
-
-        if (matches.length > 0) {
-            matches.forEach(match => {
-                let item = document.createElement("div");
-                item.textContent = match.name;
-                item.innerHTML += `<input type='hidden' value='${match.name}'>`;
-                item.addEventListener("click", function(e) {
-                    selectCareer(match);
-                });
-                autocompleteList.appendChild(item);
-            });
-        }
-    });
-
-    careerInput.addEventListener('blur', function() {
-        setTimeout(() => { 
-            const val = careerInput.value;
-            if (!val) return;
-            if (!currentPricingKey) {
-                const cleanVal = normalizeString(val);
-                let match = allCareers.find(c => normalizeString(c.name) === cleanVal);
-                if (!match) {
-                    const partials = allCareers.filter(c => normalizeString(c.name).includes(cleanVal));
-                    if (partials.length === 1) match = partials[0];
-                }
-                if (match) selectCareer(match);
-            }
-            closeAllLists();
-        }, 200);
+        matches.forEach(match => {
+            let item = document.createElement("div"); item.textContent = match.name;
+            item.addEventListener("click", () => selectCareer(match));
+            autocompleteList.appendChild(item);
+        });
     });
 
     function selectCareer(careerObj) {
-        careerInput.value = careerObj.name;
-        currentPricingKey = careerObj.key;
-        updateCategories(careerObj.key);
-        careerHelper.textContent = "Carrera detectada: " + careerObj.name;
-        careerHelper.style.display = "block";
-        careerInput.style.borderColor = "#2ecc71";
-        closeAllLists();
+        careerInput.value = careerObj.name; currentPricingKey = careerObj.key;
+        updateCategories(careerObj.key); careerHelper.style.display = "block";
+        careerInput.style.borderColor = "#2ecc71"; closeAllLists();
     }
 
     function updateCategories(key) {
         categorySelect.innerHTML = '<option value="">-- Selecciona Categoría --</option>';
         categorySelect.disabled = false;
-        
         if (pricingTables[key]) {
-            const cats = pricingTables[key].cats;
-            for (let cat in cats) {
-                let option = document.createElement('option');
-                option.value = cat;
-                option.textContent = `Categoría ${cat}`;
-                categorySelect.appendChild(option);
+            for (let cat in pricingTables[key].cats) {
+                let option = document.createElement('option'); option.value = cat;
+                option.textContent = `Categoría ${cat}`; categorySelect.appendChild(option);
             }
         }
     }
 
     function resetUIState() {
-        currentPricingKey = null;
-        categorySelect.disabled = true;
+        currentPricingKey = null; categorySelect.disabled = true;
         categorySelect.innerHTML = '<option value="">-- Selecciona Carrera --</option>';
-        careerHelper.style.display = "none";
-        careerInput.style.borderColor = "#e0e0e0";
-        copyContainer.style.display = "none";
-        resultsSection.style.display = "none";
-        
-        // Reset credits chips
-        const btns = creditBar.getElementsByClassName('credit-btn');
-        for (let btn of btns) btn.classList.remove('active');
+        careerHelper.style.display = "none"; careerInput.style.borderColor = "#e0e0e0";
+        copyContainer.style.display = "none"; resultsSection.style.display = "none";
+        Array.from(creditBar.children).forEach(btn => btn.classList.remove('active'));
         creditsInput.value = "";
     }
 
-    function fullReset() {
-        careerInput.value = "";
-        resetUIState();
-        careerInput.focus();
-    }
-
-    resetBtn.addEventListener('click', fullReset);
-
-    // --- NUEVA LÓGICA DE SELECCIÓN DE CRÉDITOS ---
     window.selectCredit = function(val, element) {
-        // Update input
         creditsInput.value = val;
-        
-        // Update UI
-        const btns = creditBar.getElementsByClassName('credit-btn');
-        for (let btn of btns) btn.classList.remove('active');
+        Array.from(creditBar.children).forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
-
-        // Auto calculate if everything is ready
-        if (currentPricingKey && categorySelect.value) {
-            calculate();
-        }
+        if (currentPricingKey && categorySelect.value) calculate();
     };
 
-    careerInput.addEventListener("keydown", function(e) {
-        let x = autocompleteList.getElementsByTagName("div");
-        if (e.key === "ArrowDown") { currentFocus++; addActive(x); }
-        else if (e.key === "ArrowUp") { currentFocus--; addActive(x); }
-        else if (e.key === "Enter") {
-            e.preventDefault();
-            if (currentFocus > -1 && x) x[currentFocus].click();
-            else if (x && x.length === 1) x[0].click();
-        }
-    });
-
-    function addActive(x) {
-        if (!x) return false;
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (x.length - 1);
-        x[currentFocus].classList.add("autocomplete-active");
-    }
-
-    function removeActive(x) {
-        for (let i = 0; i < x.length; i++) x[i].classList.remove("autocomplete-active");
-    }
-
-    function closeAllLists(elmnt) {
-        while (autocompleteList.firstChild) autocompleteList.removeChild(autocompleteList.firstChild);
-    }
-
-    document.addEventListener("click", function (e) {
-        if (e.target !== careerInput) closeAllLists();
-    });
-
-    // --- 5. LÓGICA DE CÁLCULO ---
-    function formatCurrency(amount) {
-        return "S/. " + amount.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function updateTimestamp() {
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const timeStr = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-        generatedDate.textContent = `Generado el: ${dateStr} a las ${timeStr}`;
-    }
-
     function calculate() {
-        if (!currentPricingKey && careerInput.value.trim() !== "") {
-            const cleanVal = normalizeString(careerInput.value);
-            let match = allCareers.find(c => normalizeString(c.name) === cleanVal);
-            if (match) currentPricingKey = match.key;
-        }
-
-        const category = categorySelect.value;
-        const credits = parseFloat(creditsInput.value);
-        
-        if (!currentPricingKey) { alert("⚠️ Error: Carrera no identificada."); careerInput.focus(); return; }
-        if (!category) { alert("⚠️ Error: Falta la Categoría."); categorySelect.focus(); return; }
-        if (isNaN(credits) || credits <= 0) { alert("⚠️ Error: Selecciona los créditos."); return; }
-        
+        const category = categorySelect.value; const credits = parseFloat(creditsInput.value);
+        if (!currentPricingKey || !category || isNaN(credits)) return;
         const table = pricingTables[currentPricingKey];
-        if (!table || !table.cats[category]) { alert("⚠️ Error interno de precios."); return; }
-
         const costPerCredit = table.cats[category];
-        const totalTuitionCreditsOnly = costPerCredit * credits;
-        const b1BaseValue = costPerCredit * 1.5;
-        let remainingTuition = totalTuitionCreditsOnly - b1BaseValue;
-        if (remainingTuition < 0) remainingTuition = 0;
+        const totalTuition = costPerCredit * credits;
+        const b1Base = costPerCredit * 1.5;
+        let remaining = totalTuition - b1Base; if (remaining < 0) remaining = 0;
+        const fB1 = b1Base + MATRICULA; const fB2 = remaining / 2; const fB3 = remaining / 2;
+        const total = fB1 + fB2 + fB3;
 
-        const finalB1 = b1BaseValue + MATRICULA; 
-        const finalB2 = remainingTuition / 2;
-        const finalB3 = remainingTuition / 2;
-        const grandTotal = finalB1 + finalB2 + finalB3;
-
-        document.getElementById('resB1').textContent = formatCurrency(finalB1);
-        document.getElementById('resB2').textContent = formatCurrency(finalB2);
-        document.getElementById('resB3').textContent = formatCurrency(finalB3);
-        document.getElementById('resTotalTop').textContent = formatCurrency(grandTotal);
-
-        document.getElementById('sumCareerName').textContent = careerInput.value; 
+        document.getElementById('resB1').textContent = formatCurrency(fB1);
+        document.getElementById('resB2').textContent = formatCurrency(fB2);
+        document.getElementById('resB3').textContent = formatCurrency(fB3);
+        document.getElementById('resTotalTop').textContent = formatCurrency(total);
+        document.getElementById('sumCareerName').textContent = careerInput.value;
         document.getElementById('sumCantCred').textContent = credits;
         document.getElementById('sumCostoCred').textContent = formatCurrency(costPerCredit);
-        document.getElementById('sumTotalBottom').textContent = formatCurrency(grandTotal);
+        document.getElementById('sumTotalBottom').textContent = formatCurrency(total);
 
-        updateTimestamp();
-
-        resultsSection.style.display = 'block';
+        updateTimestamp(); resultsSection.style.display = 'block';
         copyContainer.style.display = 'flex';
         resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    function formatCurrency(amount) { return "S/. " + amount.toLocaleString('es-PE', { minimumFractionDigits: 2 }); }
+    function updateTimestamp() {
+        const now = new Date();
+        generatedDate.textContent = `Generado el: ${now.toLocaleDateString()} a las ${now.toLocaleTimeString()}`;
+    }
+    function closeAllLists() { while (autocompleteList.firstChild) autocompleteList.removeChild(autocompleteList.firstChild); }
+    resetBtn.addEventListener('click', () => { careerInput.value = ""; resetUIState(); careerInput.focus(); });
     calcularBtn.addEventListener('click', calculate);
 
-    // --- 6. FUNCIONES DE COPIADO ---
-    
-    // 6a. COPIAR IMAGEN
     document.getElementById('copyImgBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('copyImgBtn');
-        const originalText = btn.innerHTML;
+        const btn = document.getElementById('copyImgBtn'); const orig = btn.innerHTML;
         btn.innerHTML = '⏳ Generando...';
-        
         try {
-            const canvas = await html2canvas(document.getElementById('captureTarget'), {
-                scale: 2,
-                backgroundColor: '#ffffff'
+            const canvas = await html2canvas(document.getElementById('captureTarget'), { scale: 2 });
+            canvas.toBlob(async blob => {
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                btn.innerHTML = '✅ Imagen Copiada'; btn.style.backgroundColor = '#128C7E';
             });
-            
-            canvas.toBlob(async (blob) => {
-                try {
-                    await navigator.clipboard.write([ new ClipboardItem({ 'image/png': blob }) ]);
-                    btn.innerHTML = '✅ Imagen Copiada';
-                    btn.style.backgroundColor = '#128C7E';
-                } catch (err) {
-                    alert("⚠️ El navegador bloqueó el copiado automático. Por favor, usa la opción 'Copiar Texto'.");
-                    btn.innerHTML = '❌ Error Copiado';
-                }
-            });
-        } catch (err) {
-            btn.innerHTML = '❌ Error';
-        }
-
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.backgroundColor = '';
-        }, 4000);
+        } catch { btn.innerHTML = '❌ Error'; }
+        setTimeout(() => { btn.innerHTML = orig; btn.style.backgroundColor = ''; }, 3000);
     });
 
-    // 6b. COPIAR TEXTO
     document.getElementById('copyTextBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('copyTextBtn');
-        const originalText = btn.innerHTML;
-        
-        const carrera = careerInput.value;
-        const creditos = creditsInput.value;
-        const categoria = categorySelect.value;
-        const total = document.getElementById('resTotalTop').textContent;
-        const b1 = document.getElementById('resB1').textContent;
-        const b2 = document.getElementById('resB2').textContent;
-        const b3 = document.getElementById('resB3').textContent;
-
-        const textToCopy = 
-`*SIMULACIÓN PENSIONES UPC - VERANO 2026* ☀️
-🎓 *Carrera:* ${carrera}
-📚 *Créditos:* ${creditos}
-🏷️ *Categoría:* ${categoria}
-
-*CRONOGRAMA ESTIMADO:*
-🗓️ *B1 (15/Dic):* ${b1} _(Incl. Matrícula)_
-🗓️ *B2 (30/Ene):* ${b2}
-🗓️ *B3 (27/Feb):* ${b3}
-
-💰 *TOTAL INVERSIÓN:* ${total}
-
+        const btn = document.getElementById('copyTextBtn'); const orig = btn.innerHTML;
+        const text = `*SIMULACIÓN PENSIONES UPC - VERANO 2026* ☀️
+🎓 *Carrera:* ${careerInput.value}
+📚 *Créditos:* ${creditsInput.value}
+🏷️ *Cat:* ${categorySelect.value}
+🗓️ *B1:* ${document.getElementById('resB1').textContent}
+🗓️ *B2:* ${document.getElementById('resB2').textContent}
+🗓️ *B3:* ${document.getElementById('resB3').textContent}
+💰 *TOTAL:* ${document.getElementById('resTotalTop').textContent}
 ---------------------------------
-⚠️ *IMPORTANTE:*
-Este simulador es una herramienta referencial y no representa una liquidación oficial. Los montos asumen pagos puntuales. Los pagos realizados fuera de fecha generan intereses moratorios y gastos administrativos. Para información oficial, por favor consulte en *Explora.upc.edu.pe*.`;
-
-        try {
-            await navigator.clipboard.writeText(textToCopy);
-            btn.innerHTML = '✅ Texto Copiado';
-            btn.style.backgroundColor = '#0066c7';
-        } catch (err) {
-             alert("⚠️ No se pudo copiar el texto.");
-        }
-
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.backgroundColor = '';
-        }, 3000);
+⚠️ *IMPORTANTE:* La información es referencial. Los pagos fuera de fecha generan intereses y gastos administrativos (desde B2). Más info en: https://explora.upc.edu.pe`;
+        await navigator.clipboard.writeText(text);
+        btn.innerHTML = '✅ Texto Copiado'; setTimeout(() => btn.innerHTML = orig, 3000);
     });
-
 </script>
 </body>
 </html>
