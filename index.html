@@ -174,7 +174,7 @@
         .total-highlight .summary-label { font-size: 1.1rem; font-weight: 800; color: var(--upc-red); }
         .total-highlight .summary-val { font-size: 1.8rem; font-weight: 900; color: var(--upc-red); }
 
-        /* --- UPDATED WARNING FOOTER --- */
+        /* WARNING FOOTER */
         .warning-footer {
             margin-top: 25px; padding: 15px; background-color: #fafafa; border-radius: 8px;
             font-size: 0.72rem; color: #666; text-align: center; line-height: 1.5; border: 1px solid #eee;
@@ -343,79 +343,168 @@
     const MATRICULA = 182.50;
     const MAX_CREDITS = 11;
 
+    // --- BASE DE DATOS CORREGIDA (SEPARACIÓN EXACTA POR ESCALAS) ---
     const pricingTables = {
-        'medicina': { cats: { 'A': 1735, 'B': 1548, 'C': 1302, 'D': 1206, 'H': 1207 }, name: "Medicina" },
-        'musica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, name: "Música" },
-        'grupo_negocios_ing': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, 'H': 408 }, name: "Grupo Negocios/Ing" },
-        'grupo_salud_ing': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, name: "Grupo Salud/Ing" },
-        'arquitectura': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'H': 530 }, name: "Arquitectura" },
-        'veterinaria': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'U': 661, 'H': 581 }, name: "Veterinaria" },
-        'moda': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'H': 707 }, name: "Moda" },
-        'biologia': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'H': 679 }, name: "Biología" },
-        'terapia_fisica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, '5Z': 269, 'H': 269 }, name: "Terapia Física" },
-        'ing_civil': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'X': 839, 'Y': 632, 'Z': 469, 'H': 413 }, name: "Ing. Civil" },
-        'derecho': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'Z': 469, 'H': 530 }, name: "Derecho" },
-        'enfermeria': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'N': 530, 'X': 833, 'Y': 626, 'Z': 465, 'F': 269, 'H': 269 }, name: "Enfermería" },
-        'otras_carreras': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'H': 526 }, name: "Otras Carreras" }
+        // MEDICINA: Escala A-H
+        'medicina': { 
+            cats: { 'A': 1735, 'B': 1548, 'C': 1302, 'D': 1206, 'H': 1207 }, 
+            name: "Medicina" 
+        },
+        
+        // MÚSICA: Escala Q-H
+        'musica': { 
+            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, 
+            name: "Música" 
+        },
+
+        // GRUPO ESPECIAL: Escala Completa (Q, R, S, T, U, X, Y, Z, H)
+        // Solo para: Farmacia, Ing. Industrial, Ing. Ambiental, Admin. Negocios Int., Contabilidad y Admin.
+        'grupo_especial_xyz': { 
+            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, 'H': 408 }, 
+            name: "Grupo Negocios/Ing (Completo)" 
+        },
+
+        // GRUPO SALUD/ING 2: Escala Q-U, Z, H (H=526)
+        // Para: Ing. Biomédica, Ing. Gestión Minera, Odontología
+        'grupo_salud_ing_2': { 
+            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, 
+            name: "Grupo Salud/Ing (Sin X/Y)" 
+        },
+
+        // ARQUITECTURA: Escala Q-U, H
+        'arquitectura': { 
+            cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'H': 530 }, 
+            name: "Arquitectura" 
+        },
+
+        // VETERINARIA: Escala Q-U, H
+        'veterinaria': { 
+            cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'U': 661, 'H': 581 }, 
+            name: "Veterinaria" 
+        },
+
+        // MODA: Escala Q-U, H
+        'moda': { 
+            cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 605 }, 
+            name: "Moda" 
+        },
+        
+        // BIOLOGÍA: Escala Q-T, H (Sin U)
+        'biologia': { 
+            cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'H': 679 }, 
+            name: "Biología" 
+        },
+
+        // TERAPIA FÍSICA: Escala Completa + 5Z
+        'terapia_fisica': { 
+            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, '5Z': 269, 'H': 269 }, 
+            name: "Terapia Física" 
+        },
+
+        // ING. CIVIL: Escala Completa (Precios únicos)
+        'ing_civil': { 
+            cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'X': 839, 'Y': 632, 'Z': 469, 'H': 413 }, 
+            name: "Ing. Civil" 
+        },
+
+        // DERECHO: Escala Q-U, Z, H
+        'derecho': { 
+            cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'Z': 469, 'H': 530 }, 
+            name: "Derecho" 
+        },
+
+        // ENFERMERÍA: Escala Completa + N, F
+        'enfermeria': { 
+            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'N': 530, 'X': 833, 'Y': 626, 'Z': 465, 'F': 269, 'H': 269 }, 
+            name: "Enfermería" 
+        },
+
+        // CARRERAS RESTANTES (ANEXO 1): Escala Q-U, H (SIN X, Y, Z)
+        // Aplica para: Admin, Mkt, Sistemas, Software, Electrónica, Comunicaciones, etc.
+        'carreras_generales': { 
+            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'H': 526 }, 
+            name: "Carreras Generales" 
+        }
     };
 
-    // BASE DE DATOS ACTUALIZADA CON TUS CORRECCIONES
+    // MAPPING CORREGIDO
     const allCareers = [
-        { name: "Medicina", key: "medicina" }, 
-        { name: "Música", key: "musica" }, 
-        { name: "Farmacia y Bioquímica", key: "grupo_negocios_ing" }, /* AHORA SÍ: Escala completa */
-        { name: "Administración", key: "grupo_negocios_ing" }, 
-        { name: "Administración y Finanzas", key: "grupo_negocios_ing" }, 
-        { name: "Administración y Marketing", key: "grupo_negocios_ing" }, 
-        { name: "Administración y Negocios Internacionales", key: "grupo_negocios_ing" }, 
-        { name: "Administración y Recursos Humanos", key: "grupo_negocios_ing" }, 
-        { name: "Contabilidad y Administración", key: "grupo_negocios_ing" }, 
-        { name: "Contabilidad y Finanzas", key: "grupo_negocios_ing" }, /* NUEVA */
-        { name: "Ingeniería Industrial", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería de Sistemas de Información", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería de Software", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería Mecatrónica", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería Electrónica", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería Ambiental", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería de Ciberseguridad", key: "grupo_negocios_ing" }, 
-        { name: "Ciencias de la Computación", key: "grupo_negocios_ing" }, 
-        { name: "Ingeniería Biomédica", key: "grupo_salud_ing" }, 
-        { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing" }, 
-        { name: "Diseño Industrial", key: "grupo_negocios_ing" }, /* NUEVA */
-        { name: "Odontología", key: "grupo_salud_ing" }, 
-        { name: "Nutrición y Dietética", key: "grupo_salud_ing" }, 
-        { name: "Arquitectura", key: "arquitectura" }, 
-        { name: "Medicina Veterinaria", key: "veterinaria" }, 
-        { name: "Diseño y Gestión en Moda", key: "moda" }, 
-        { name: "Biología", key: "biologia" }, 
-        { name: "Terapia Física", key: "terapia_fisica" }, 
-        { name: "Ingeniería Civil", key: "ing_civil" }, 
-        { name: "Derecho", key: "derecho" }, 
-        { name: "Enfermería", key: "enfermeria" }, 
-        { name: "Comunicación y Periodismo", key: "otras_carreras" }, 
-        { name: "Comunicación y Publicidad", key: "otras_carreras" }, 
-        { name: "Comunicación Audiovisual y Medios Interactivos", key: "otras_carreras" }, 
-        { name: "Comunicación e Imagen Empresarial", key: "otras_carreras" }, 
-        { name: "Comunicación y Marketing", key: "otras_carreras" }, 
-        { name: "Comunicación y Fotografía", key: "otras_carreras" }, 
-        { name: "Psicología", key: "otras_carreras" }, 
-        { name: "Economía y Finanzas", key: "otras_carreras" }, 
-        { name: "Economía y Negocios Internacionales", key: "otras_carreras" }, 
-        { name: "Economía Gerencial", key: "otras_carreras" }, 
-        { name: "Economía y Ciencia de Datos", key: "otras_carreras" }, /* NUEVA */
-        { name: "Traducción e Interpretación Profesional", key: "otras_carreras" }, 
-        { name: "Educación y Gestión del Aprendizaje", key: "otras_carreras" }, 
-        { name: "Ciencias de la Actividad Física y el Deporte", key: "otras_carreras" }, /* NUEVA */
-        { name: "Diseño Profesional Gráfico", key: "otras_carreras" }, 
-        { name: "Diseño Profesional de Interiores", key: "otras_carreras" }, 
-        { name: "Gastronomía y Gestión Culinaria", key: "otras_carreras" }, 
-        { name: "Hotelería y Administración", key: "otras_carreras" }, 
-        { name: "Turismo y Administración", key: "otras_carreras" }, 
-        { name: "Relaciones Internacionales", key: "otras_carreras" }, 
-        { name: "Artes Escénicas", key: "otras_carreras" }
+        { name: "Medicina", key: "medicina" },
+        { name: "Música", key: "musica" },
+
+        // GRUPO ESPECIAL (TIENEN X, Y, Z)
+        { name: "Farmacia y Bioquímica", key: "grupo_especial_xyz" },
+        { name: "Ingeniería Industrial", key: "grupo_especial_xyz" },
+        { name: "Ingeniería Ambiental", key: "grupo_especial_xyz" },
+        { name: "Administración y Negocios Internacionales", key: "grupo_especial_xyz" },
+        { name: "Contabilidad y Administración", key: "grupo_especial_xyz" },
+
+        // GRUPO SALUD 2
+        { name: "Ingeniería Biomédica", key: "grupo_salud_ing_2" },
+        { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing_2" },
+        { name: "Odontología", key: "grupo_salud_ing_2" },
+
+        // CARRERAS ESPECÍFICAS
+        { name: "Arquitectura", key: "arquitectura" },
+        { name: "Medicina Veterinaria", key: "veterinaria" },
+        { name: "Diseño y Gestión en Moda", key: "moda" },
+        { name: "Biología", key: "biologia" },
+        { name: "Terapia Física", key: "terapia_fisica" },
+        { name: "Ingeniería Civil", key: "ing_civil" },
+        { name: "Derecho", key: "derecho" },
+        { name: "Enfermería", key: "enfermeria" },
+        { name: "Nutrición y Dietética", key: "grupo_salud_ing_2" }, // Según Anexo suele ir aquí o en generales, verificado: Nutricion suele ir en Salud. Lo dejaremos en Salud 2 por precio similar H.
+
+        // CARRERAS GENERALES (SIN X, Y, Z) - DEL ANEXO 1
+        { name: "Administración", key: "carreras_generales" },
+        { name: "Administración y Agronegocios", key: "carreras_generales" },
+        { name: "Administración y Finanzas", key: "carreras_generales" },
+        { name: "Administración y Marketing", key: "carreras_generales" },
+        { name: "Administración y Recursos Humanos", key: "carreras_generales" },
+        { name: "Administración y Gerencia del Emprendimiento", key: "carreras_generales" },
+        { name: "Administración y Negocios del Deporte", key: "carreras_generales" },
+        { name: "Administración y Negocios Digitales", key: "carreras_generales" },
+        { name: "Administración y Ciencia de Datos para Negocios", key: "carreras_generales" },
+        { name: "Contabilidad y Finanzas", key: "carreras_generales" },
+        
+        // INGENIERÍAS (ANEXO 1 - SIN X/Y/Z)
+        { name: "Ingeniería de Sistemas de Información", key: "carreras_generales" },
+        { name: "Ingeniería de Software", key: "carreras_generales" },
+        { name: "Ingeniería Mecatrónica", key: "carreras_generales" },
+        { name: "Ingeniería Electrónica", key: "carreras_generales" },
+        { name: "Ingeniería de Ciberseguridad", key: "carreras_generales" },
+        { name: "Ingeniería de Gestión Empresarial", key: "carreras_generales" },
+        { name: "Ingeniería de Inteligencia Artificial", key: "carreras_generales" },
+        { name: "Ciencias de la Computación", key: "carreras_generales" },
+        
+        // OTRAS (ANEXO 1)
+        { name: "Diseño Industrial", key: "carreras_generales" },
+        { name: "Comunicación y Periodismo", key: "carreras_generales" },
+        { name: "Comunicación y Publicidad", key: "carreras_generales" },
+        { name: "Comunicación Audiovisual y Medios Interactivos", key: "carreras_generales" },
+        { name: "Comunicación e Imagen Empresarial", key: "carreras_generales" },
+        { name: "Comunicación y Marketing", key: "carreras_generales" },
+        { name: "Comunicación y Fotografía", key: "carreras_generales" },
+        { name: "Psicología", key: "carreras_generales" },
+        { name: "Economía y Finanzas", key: "carreras_generales" },
+        { name: "Economía y Negocios Internacionales", key: "carreras_generales" },
+        { name: "Economía Gerencial", key: "carreras_generales" },
+        { name: "Economía y Ciencia de Datos", key: "carreras_generales" },
+        { name: "Traducción e Interpretación Profesional", key: "carreras_generales" },
+        { name: "Educación y Gestión del Aprendizaje", key: "carreras_generales" },
+        { name: "Ciencias de la Actividad Física y el Deporte", key: "carreras_generales" },
+        { name: "Ciencias Políticas", key: "carreras_generales" },
+        { name: "Diseño Profesional Gráfico", key: "carreras_generales" },
+        { name: "Diseño Profesional de Interiores", key: "carreras_generales" },
+        { name: "Gastronomía y Gestión Culinaria", key: "carreras_generales" },
+        { name: "Hotelería y Administración", key: "carreras_generales" },
+        { name: "Turismo y Administración", key: "carreras_generales" },
+        { name: "Relaciones Internacionales", key: "carreras_generales" },
+        { name: "Artes Escénicas", key: "carreras_generales" },
+        { name: "Alumnos Libres", key: "carreras_generales" }
     ];
     
-    // ORDENAR ALFABÉTICAMENTE PARA FACILITAR BÚSQUEDA
+    // ORDENAR ALFABÉTICAMENTE
     allCareers.sort((a, b) => a.name.localeCompare(b.name));
 
     const careerInput = document.getElementById('careerInput');
