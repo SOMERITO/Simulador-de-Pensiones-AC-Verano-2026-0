@@ -3,26 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Pensiones UPC Verano 2026-0</title>
+    <title>Simulador de Pensiones AC 2026-0</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
+        /* --- ESTILOS GENERALES --- */
         :root {
             --upc-red: #d31010;
             --upc-red-dark: #a80c0c;
-            --upc-red-light: #fdeded;
             --text-dark: #2c2c2c;
             --text-light: #5f6368;
             --bg-body: #eceff1;
             --white: #ffffff;
             --accent-bg: #f8f9fa;
-            --whatsapp-green: #25D366;
-            --whatsapp-dark: #128C7E;
-            --copy-blue: #0084ff;
-            --copy-blue-dark: #0066c7;
-            --reset-grey: #757575;
-            --reset-grey-dark: #555555;
+            --success-green: #25D366;
+            --border-color: #e0e0e0;
         }
 
         body {
@@ -32,204 +27,346 @@
             margin: 0;
             padding: 40px 20px;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .main-wrapper {
-            max-width: 950px;
-            margin: 0 auto;
-            background-color: var(--white);
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            overflow: visible;
+        /* Control de Íconos SVG */
+        svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-md { width: 20px; height: 20px; }
+        .icon-lg { width: 24px; height: 24px; }
+
+        /* --- PANTALLA DE BLOQUEO --- */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, var(--upc-red-dark) 100%);
+            z-index: 999999;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column;
+            transition: opacity 0.6s ease;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.98); padding: 50px 40px; 
+            border-radius: 16px; text-align: center; max-width: 360px; width: 90%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative;
+        }
+        .login-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: var(--upc-red); border-radius: 16px 16px 0 0;
+        }
+
+        /* CANDADO ANIMADO */
+        .lock-container { position: relative; width: 60px; height: 80px; margin: 0 auto 20px auto; }
+        .lock-shackle {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 35px;
+            border: 6px solid #bdc3c7; border-radius: 30px 30px 0 0; border-bottom: none;
+            box-sizing: border-box; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1;
+        }
+        .lock-body {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
+            background: linear-gradient(135deg, var(--upc-red), var(--upc-red-dark));
+            border-radius: 8px; z-index: 2;
+            box-shadow: 0 8px 15px rgba(211, 16, 16, 0.3);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .lock-keyhole { width: 10px; height: 10px; background: rgba(0,0,0,0.2); border-radius: 50%; position: relative; }
+        .lock-keyhole::after {
+            content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 8px solid rgba(0,0,0,0.2);
+        }
+
+        .lock-container.idle .lock-body { animation: bodyPulse 3s infinite ease-in-out; }
+        @keyframes bodyPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 15px rgba(211, 16, 16, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 25px rgba(211, 16, 16, 0.5); }
+        }
+        .lock-container.unlocked .lock-body { background: #27ae60; }
+        .lock-container.unlocked .lock-shackle { transform: translateX(-50%) translateY(-12px) rotateY(180deg); border-color: #ecf0f1; }
+
+        /* --- WRAPPER PARA INPUT DE CONTRASEÑA --- */
+        .password-input-wrapper {
+            position: relative;
+            width: 85%;
+            margin: 25px auto;
+        }
+
+        .login-input {
+            width: 100%; 
+            padding: 12px 40px 12px 12px; /* Espacio extra a la derecha para el ojo */
+            margin: 0; 
+            display: block;
+            border: 2px solid #e0e0e0; 
+            border-radius: 8px; font-size: 0.95rem; text-align: center; font-weight: 600; outline: none; transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        .login-input:focus { border-color: var(--upc-red); }
+
+        /* ÍCONO DEL OJO */
+        .eye-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            color: #999;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+        .eye-toggle:hover { color: var(--upc-red); }
+        .eye-toggle svg { width: 100%; height: 100%; }
+
+        .login-btn {
+            background: var(--text-dark); color: white; border: none; padding: 14px; 
+            border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; width: 100%; 
+            transition: all 0.3s; text-transform: uppercase;
+        }
+        .login-btn:hover { background: var(--upc-red); }
+        .btn-success-login { background-color: var(--success-green) !important; pointer-events: none; }
+        .error-msg { color: #d31010; font-size: 0.8rem; display: none; margin-top: 15px; font-weight: 600; }
+        .help-link { display: block; margin-top: 20px; font-size: 0.75rem; color: #888; text-decoration: underline; cursor: pointer; }
+        .contact-info { display: none; margin-top: 15px; font-size: 0.8rem; color: #555; background: #f4f4f4; padding: 10px; border-radius: 6px; }
+
+        /* --- APP PRINCIPAL --- */
+        .main-wrapper { 
+            display: none; max-width: 900px; margin: 0 auto; 
+            background-color: var(--white); border-radius: 12px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); overflow: visible; 
             position: relative;
         }
 
-        /* HEADER */
-        .header {
-            background: linear-gradient(135deg, var(--upc-red) 0%, var(--upc-red-dark) 100%);
-            color: white;
-            padding: 35px;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
+        .header { 
+            background: linear-gradient(135deg, var(--upc-red) 0%, var(--upc-red-dark) 100%); 
+            color: white; padding: 30px; text-align: center; 
         }
-        .header h1 { margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
-        .header p { margin: 8px 0 0; opacity: 0.95; font-size: 1rem; font-weight: 500; }
+        .header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .header p { margin: 6px 0 0; opacity: 0.9; font-size: 0.9rem; font-weight: 500; }
 
-        /* CONTENT */
-        .content-body { padding: 40px; }
+        .content-body { padding: 35px; }
 
-        .disclaimer-box {
-            background-color: #e3f2fd;
-            border-left: 5px solid #2196f3;
-            padding: 15px 20px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #0d47a1;
-            margin-bottom: 35px;
-            display: flex;
-            align-items: center;
+        .disclaimer-box { 
+            background-color: #f0f7ff; border-left: 4px solid #0066c7; 
+            padding: 12px 15px; border-radius: 4px; font-size: 0.8rem; 
+            color: #004a8f; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;
         }
-        .disclaimer-box span { margin-right: 10px; font-size: 1.2rem; }
+        .disclaimer-box svg { fill: #0066c7; }
 
-        /* CONTROLS */
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 20px;
-        }
-
-        .form-group { display: flex; flex-direction: column; position: relative; }
-        .form-group label { font-size: 0.8rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; }
-
-        .form-control {
-            padding: 14px 18px;
-            font-size: 1rem;
-            font-family: inherit;
-            color: var(--text-dark);
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            transition: all 0.3s;
-            background-color: var(--accent-bg);
-            width: 100%;
-            box-sizing: border-box;
+        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        
+        .form-group { display: flex; flex-direction: column; position: relative; z-index: 1; }
+        .form-group.career-group { z-index: 100; } 
+        
+        .form-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .form-control { 
+            padding: 12px 15px; font-size: 0.9rem; color: var(--text-dark); 
+            border: 1px solid var(--border-color); border-radius: 6px; 
+            background-color: var(--accent-bg); width: 100%; box-sizing: border-box; 
+            transition: border 0.3s, background 0.3s; font-family: inherit;
         }
         .form-control:focus { border-color: var(--upc-red); background-color: white; outline: none; }
-        .form-control:disabled { background-color: #eee; color: #999; cursor: not-allowed; }
-
-        /* CREDIT BAR (1-11) */
-        .credit-bar { display: flex; gap: 8px; flex-wrap: wrap; }
-        .credit-btn {
-            flex: 1; min-width: 35px; padding: 12px 5px; background-color: white;
-            border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Montserrat', sans-serif;
-            font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.2s;
+        
+        .credit-bar { display: flex; gap: 5px; flex-wrap: wrap; }
+        .credit-btn { 
+            flex: 1; min-width: 32px; padding: 8px 0; background-color: white; 
+            border: 1px solid var(--border-color); border-radius: 6px; 
+            font-family: inherit; font-weight: 600; font-size: 0.9rem; color: var(--text-light); 
+            cursor: pointer; transition: all 0.2s; 
         }
-        .credit-btn:hover { border-color: #bbb; background-color: #f9f9f9; transform: translateY(-2px); }
-        .credit-btn.active {
-            background-color: var(--upc-red); color: white; border-color: var(--upc-red);
-            box-shadow: 0 4px 10px rgba(211, 16, 16, 0.3);
+        .credit-btn:hover { border-color: #999; background-color: #f9f9f9; }
+        .credit-btn.active { 
+            background-color: var(--upc-red); color: white; border-color: var(--upc-red); 
+            box-shadow: 0 4px 8px rgba(211, 16, 16, 0.2); 
         }
 
-        /* AUTOCOMPLETE */
-        .autocomplete-items {
-            position: absolute; border: 1px solid #d4d4d4; border-top: none; z-index: 999;
-            top: 100%; left: 0; right: 0; border-radius: 0 0 10px 10px; overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15); background-color: white;
+        .autocomplete-items { 
+            position: absolute; border: 1px solid var(--border-color); border-top: none; 
+            z-index: 9999; top: 100%; left: 0; right: 0; border-radius: 0 0 6px 6px; 
+            max-height: 250px; overflow-y: auto; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            background-color: white; 
         }
-        .autocomplete-items div { padding: 12px 18px; cursor: pointer; background-color: #fff; border-bottom: 1px solid #d4d4d4; font-size: 0.95rem; }
-        .autocomplete-items div:hover { background-color: #ffeaea; }
-        .autocomplete-active { background-color: var(--upc-red) !important; color: #ffffff !important; }
-        .helper-text { font-size: 0.75rem; color: var(--upc-red); margin-top: 5px; font-weight: 600; display: none; }
+        .autocomplete-items div { padding: 12px 15px; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; color: #333; }
+        .autocomplete-items div:hover { background-color: #fef2f2; color: var(--upc-red); }
+        .autocomplete-active { background-color: var(--upc-red) !important; color: white !important; }
+        
+        .helper-text { font-size: 0.75rem; color: var(--success-green); margin-top: 6px; font-weight: 600; display: none; align-items: center; gap: 5px; }
+        .helper-text svg { fill: var(--success-green); }
 
-        /* BUTTONS */
-        .buttons-row { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 10px; }
-        .btn-base {
-            border: none; padding: 18px 20px; font-size: 1.1rem; font-weight: 700;
-            border-radius: 10px; cursor: pointer; width: 100%; transition: all 0.3s;
-            text-transform: uppercase; letter-spacing: 1px; color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .buttons-row { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 20px; }
+        .btn-base { 
+            border: none; padding: 14px; font-size: 0.9rem; font-weight: 700; border-radius: 8px; 
+            cursor: pointer; width: 100%; transition: all 0.3s; text-transform: uppercase; 
+            letter-spacing: 1px; color: white; display: flex; justify-content: center; align-items: center; gap: 8px;
         }
-        .btn-calc { background-color: var(--text-dark); }
-        .btn-calc:hover { background-color: black; transform: translateY(-3px); }
-        .btn-reset { background-color: var(--reset-grey); font-size: 1rem; }
-        .btn-reset:hover { background-color: var(--reset-grey-dark); transform: translateY(-3px); }
+        .btn-calc { background-color: var(--text-dark); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-calc:hover { background-color: black; transform: translateY(-2px); }
+        .btn-reset { background-color: white; color: var(--text-light); border: 1px solid var(--border-color); }
+        .btn-reset:hover { background-color: #f5f5f5; color: var(--upc-red); border-color: #d0d0d0; }
+        .btn-reset svg { fill: var(--text-light); transition: transform 0.4s ease; }
+        .btn-reset:hover svg { fill: var(--upc-red); transform: rotate(180deg); }
 
-        /* COPY BUTTONS */
-        .btn-copy-container { margin-top: 30px; display: none; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        .btn-action {
-            border: none; padding: 12px 25px; border-radius: 50px; font-weight: 700;
-            cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center;
-            gap: 8px; transition: all 0.2s; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        #resultsSection { display: none; margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px; }
+        .results-wrapper-card { background-color: white; border-radius: 12px; }
+        .results-container { display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; }
+        
+        .card-title { font-size: 1rem; font-weight: 800; color: var(--upc-red); margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; text-transform: uppercase; }
+
+        .inst-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: white; border: 1px solid var(--border-color); 
+            padding: 14px 18px; border-radius: 8px; margin-bottom: 10px;
         }
-        .btn-whatsapp { background-color: var(--whatsapp-green); }
-        .btn-whatsapp:hover { background-color: var(--whatsapp-dark); transform: translateY(-2px); }
-        .btn-text-copy { background-color: var(--copy-blue); }
-        .btn-text-copy:hover { background-color: var(--copy-blue-dark); transform: translateY(-2px); }
-
-        /* RESULTS */
-        #resultsSection { display: none; margin-top: 50px; border-top: 1px solid #eee; padding-top: 40px; }
-        .results-wrapper-card { background-color: white; padding: 25px; border-radius: 12px; border: 1px solid #f0f0f0; }
-        .results-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
-        .card-title { font-size: 1.2rem; font-weight: 800; color: var(--upc-red); margin-bottom: 25px; padding-bottom: 12px; border-bottom: 2px solid #eee; }
-
-        .installment-cards { display: grid; gap: 15px; }
-        .inst-row { display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #e0e0e0; padding: 18px 25px; border-radius: 12px; }
         .inst-row.total { background-color: var(--text-dark); color: white; border-color: var(--text-dark); }
         .inst-info { display: flex; flex-direction: column; }
-        .inst-label { font-weight: 700; font-size: 1.05rem; }
-        .inst-date { font-size: 0.8rem; color: #888; margin-top: 4px; }
+        .inst-label { font-weight: 700; font-size: 0.9rem; }
+        .inst-date { font-size: 0.7rem; color: #888; margin-top: 3px; }
         .inst-row.total .inst-date { color: #ccc; }
-        .inst-amount { font-size: 1.3rem; font-weight: 700; }
+        .inst-amount { font-size: 1.1rem; font-weight: 700; }
 
-        .summary-list { background-color: var(--accent-bg); padding: 30px; border-radius: 16px; border: 1px solid #eee; }
-        .summary-item { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 0.95rem; border-bottom: 1px dashed #ddd; padding-bottom: 10px; }
+        .summary-list { background-color: var(--accent-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem; border-bottom: 1px dashed #ddd; padding-bottom: 6px; }
         .summary-item:last-child { border-bottom: none; margin-bottom: 0; }
-        .summary-label { color: var(--text-light); font-weight: 500; }
-        .summary-val { font-weight: 700; color: var(--text-dark); text-align: right; }
+        .summary-val { font-weight: 700; }
         
-        .total-highlight { 
-            margin-top: 25px; padding: 20px; border-radius: 8px; background-color: var(--upc-red-light);
-            border: 1px solid #ffcccc; display: flex; justify-content: space-between; align-items: center; 
+        .total-highlight { margin-top: 15px; padding: 12px; border-radius: 6px; background-color: #fff0f0; border: 1px solid #ffcccc; display: flex; justify-content: space-between; align-items: center; }
+        .total-highlight .summary-val { color: var(--upc-red); font-size: 1.3rem; }
+
+        .warning-footer { margin-top: 25px; padding: 12px; background-color: #fff8e1; border-radius: 6px; font-size: 0.75rem; color: #795548; border: 1px solid #ffecb3; display: flex; align-items: center; gap: 10px; }
+        .warning-footer svg { fill: #f57f17; }
+        .timestamp-footer { text-align: right; font-size: 0.65rem; color: #aaa; margin-top: 8px; }
+
+        /* =========================================
+           BOTÓN CORPORATIVO MEJORADO (CON SHINE)
+           ========================================= */
+        .btn-copy-container { margin-top: 35px; display: flex; justify-content: center; }
+
+        .Btn-Corp {
+            width: 100%; max-width: 320px; height: 50px;
+            background-color: var(--text-dark);
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            position: relative; overflow: hidden;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
         }
-        .total-highlight .summary-label { font-size: 1.1rem; font-weight: 800; color: var(--upc-red); }
-        .total-highlight .summary-val { font-size: 1.8rem; font-weight: 900; color: var(--upc-red); }
 
-        /* WARNING FOOTER */
-        .warning-footer {
-            margin-top: 25px; padding: 15px; background-color: #fafafa; border-radius: 8px;
-            font-size: 0.72rem; color: #666; text-align: center; line-height: 1.5; border: 1px solid #eee;
+        .Btn-Corp .text {
+            color: white; font-weight: 700; letter-spacing: 1px; z-index: 2;
+            text-transform: uppercase; font-size: 0.85rem;
         }
-        .warning-footer strong { color: var(--upc-red); font-weight: 800; }
-        .warning-link { color: #0084ff; font-weight: 700; text-decoration: underline; cursor: pointer; }
 
-        .timestamp-footer { text-align: right; font-size: 0.6rem; color: #aaa; margin-top: 8px; font-family: monospace; }
+        .Btn-Corp .icon-wrapper {
+            z-index: 2; width: 20px; height: 20px; display: flex; align-items: center;
+        }
+        .Btn-Corp svg { width: 100%; height: 100%; fill: white; transition: transform 0.4s ease; }
 
-        .footer { margin-top: 60px; text-align: center; border-top: 1px solid #eee; padding-top: 40px; }
-        .signature { display: inline-block; padding: 12px 25px; background-color: #fff; border: 1px solid #e0e0e0; border-radius: 50px; font-size: 0.9rem; color: var(--text-light); margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .Btn-Corp::after {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s; z-index: 1; pointer-events: none;
+        }
+
+        .Btn-Corp:hover {
+            background-color: var(--upc-red);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(211, 16, 16, 0.4);
+        }
+        .Btn-Corp:hover::after { left: 100%; transition: 0.7s ease-in-out; }
+        .Btn-Corp:hover svg { transform: rotate(-10deg) scale(1.1); }
+
+        .Btn-Corp.success {
+            background-color: var(--success-green) !important;
+            transform: scale(0.98);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+            pointer-events: none;
+        }
+        .Btn-Corp.success svg { transform: scale(1.3); }
+        /* ========================================= */
+
+        .footer { margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 25px; }
+        .signature { font-size: 0.8rem; color: #999; }
         .signature strong { color: var(--text-dark); }
 
         @media (max-width: 768px) {
             .results-container { grid-template-columns: 1fr; }
-            .content-body { padding: 25px; }
+            .content-body { padding: 20px; }
             .buttons-row { grid-template-columns: 1fr; }
         }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
 
-<div class="main-wrapper">
+<div id="loginOverlay">
+    <div class="login-card">
+        <div id="customLock" class="lock-container idle">
+            <div class="lock-shackle"></div>
+            <div class="lock-body"><div class="lock-keyhole"></div></div>
+        </div>
+        
+        <h2 style="color: var(--upc-red); font-weight: 800; font-size: 1.3rem; text-transform: uppercase;">Simulador Pensiones AC 2026-0</h2>
+        
+        <div class="password-input-wrapper">
+            <input type="password" id="accessCode" class="login-input" placeholder="Contraseña" autocomplete="new-password">
+            <span id="eyeToggle" class="eye-toggle" title="Mantener para ver contraseña">
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.45-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
+                </svg>
+            </span>
+        </div>
+
+        <button id="loginBtnAction" class="login-btn">Iniciar Sesión</button>
+        <p id="errorMsg" class="error-msg">Credenciales incorrectas</p>
+        <span class="help-link" id="helpTrigger">Solicitar Acceso</span>
+        <div id="contactInfo" class="contact-info">Administrador: <strong>José Carranza</strong></div>
+    </div>
+</div>
+
+<div class="main-wrapper" id="mainApp">
     
     <header class="header">
-        <h1>Simulador Pensiones 2026-0</h1>
-        <p>Pregrado Regular - Verano</p>
+        <h1>Simulador de Pensiones AC 2026-0</h1>
+        <p>Pregrado - Verano</p>
     </header>
 
     <div class="content-body">
         
         <div class="disclaimer-box">
-            <span>ℹ️</span> 
+            <svg class="icon-lg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
             <div>
-                <strong>Uso Interno:</strong> Herramienta exclusiva para colaboradores.
+                <strong>Uso Interno:</strong> Herramienta exclusiva solo para colaboradores UPC. Prohibida su distribución externa.
             </div>
         </div>
 
         <div class="controls-grid">
-            <div class="form-group">
-                <label for="careerInput">1. Escribe tu Carrera</label>
-                <input type="text" id="careerInput" class="form-control" placeholder="Ej. Medicina, Marketing, Sistemas..." autocomplete="off">
+            <div class="form-group career-group">
+                <label for="careerInput">1. Carrera Profesional</label>
+                <input type="text" id="careerInput" class="form-control" placeholder="Escribe para buscar..." autocomplete="off">
                 <div id="autocomplete-list" class="autocomplete-items"></div>
-                <div id="careerHelper" class="helper-text" style="color: #2ecc71;">Carrera identificada correctamente.</div>
+                <div id="careerHelper" class="helper-text">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Carrera identificada
+                </div>
             </div>
             
             <div class="form-group">
                 <label for="categorySelect">2. Categoría de Pago</label>
                 <select id="categorySelect" class="form-control" disabled>
-                    <option value="">-- Primero selecciona carrera --</option>
+                    <option value="">-- Seleccione carrera --</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>3. Elige los Créditos</label>
+                <label>3. Créditos Académicos</label>
                 <input type="hidden" id="creditsInput">
                 <div class="credit-bar" id="creditBar">
                     <button class="credit-btn" onclick="selectCredit(1, this)">1</button>
@@ -249,7 +386,10 @@
 
         <div class="buttons-row">
             <button id="calcularBtn" class="btn-base btn-calc">Calcular Pensión</button>
-            <button id="resetBtn" class="btn-base btn-reset">🔄 Nueva Consulta</button>
+            <button id="resetBtn" class="btn-base btn-reset">
+                <svg class="icon-md" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                Nueva Consulta
+            </button>
         </div>
 
         <div id="resultsSection">
@@ -261,28 +401,28 @@
                             <div class="inst-row">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 1 (B1)</span>
-                                    <span class="inst-date">Vence: 15/Dic/2025 • Incluye Matrícula</span>
+                                    <span class="inst-date">Vencimiento: 15/12/2025 (Incluye Matrícula)</span>
                                 </div>
                                 <span class="inst-amount" id="resB1">S/. 0.00</span>
                             </div>
                             <div class="inst-row">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 2 (B2)</span>
-                                    <span class="inst-date">Vence: 30/Ene/2026</span>
+                                    <span class="inst-date">Vencimiento: 30/01/2026</span>
                                 </div>
                                 <span class="inst-amount" id="resB2">S/. 0.00</span>
                             </div>
                             <div class="inst-row">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 3 (B3)</span>
-                                    <span class="inst-date">Vence: 27/Feb/2026</span>
+                                    <span class="inst-date">Vencimiento: 27/02/2026</span>
                                 </div>
                                 <span class="inst-amount" id="resB3">S/. 0.00</span>
                             </div>
                             <div class="inst-row total">
                                 <div class="inst-info">
-                                    <span class="inst-label">TOTAL A PAGAR</span>
-                                    <span class="inst-date">Suma de las 3 boletas</span>
+                                    <span class="inst-label">TOTAL PERÍODO</span>
+                                    <span class="inst-date">Inversión total del verano</span>
                                 </div>
                                 <span class="inst-amount" id="resTotalTop">S/. 0.00</span>
                             </div>
@@ -290,44 +430,51 @@
                     </div>
 
                     <div>
-                        <div class="card-title">Detalle del Cálculo</div>
+                        <div class="card-title">Detalle Financiero</div>
                         <div class="summary-list">
                             <div class="summary-item">
-                                <span class="summary-label">Carrera Base</span>
+                                <span class="summary-label">Carrera</span>
                                 <span class="summary-val" id="sumCareerName">-</span>
                             </div>
                             <div class="summary-item">
-                                <span class="summary-label">Créditos Elegidos</span>
-                                <span class="summary-val" id="sumCantCred">0</span>
+                                <span class="summary-label">Créditos</span>
+                                <span class="summary-val"><span id="sumCantCred">0</span></span>
                             </div>
                             <div class="summary-item">
-                                <span class="summary-label">Costo por Crédito</span>
+                                <span class="summary-label">Costo Crédito</span>
                                 <span class="summary-val" id="sumCostoCred">S/. 0.00</span>
                             </div>
                             <div class="summary-item">
-                                <span class="summary-label">Derecho Matrícula</span>
+                                <span class="summary-label">Matrícula</span>
                                 <span class="summary-val">S/. 182.50</span>
                             </div>
                             <div class="total-highlight">
-                                <span class="summary-label">Inversión Total</span>
+                                <span class="summary-label">Total</span>
                                 <span class="summary-val" id="sumTotalBottom">S/. 0.00</span>
                             </div>
                             <p style="font-size: 0.7rem; color: #999; margin-top: 15px; text-align: center;">
-                                * B1 incluye Matrícula + 1.5 créditos.
+                                Nota: B1 incluye Matrícula + 1.5 créditos.
                             </p>
                         </div>
                     </div>
                 </div>
 
                 <div class="warning-footer">
-                    <strong>⚠️ IMPORTANTE:</strong> La información es referencial. Los pagos fuera de fecha generan intereses y gastos administrativos, los cuales se aplicarán desde la segunda boleta en el período de verano. Para más información, visita <a href="https://explora.upc.edu.pe" target="_blank" class="warning-link">explora.upc.edu.pe</a>.
+                    <svg class="icon-md" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                    <div>
+                        <strong>IMPORTANTE:</strong> La información mostrada es referencial. Los pagos realizados fuera de fecha generarán intereses moratorios y gastos administrativos. Para información oficial, consulte el portal <a href="https://explora.upc.edu.pe" target="_blank" class="warning-link">explora.upc.edu.pe</a>.
+                    </div>
                 </div>
                 <div class="timestamp-footer" id="generatedDate"></div>
             </div>
 
-            <div id="copyContainer" class="btn-copy-container">
-                <button id="copyImgBtn" class="btn-action btn-whatsapp">📸 Copiar Imagen</button>
-                <button id="copyTextBtn" class="btn-action btn-text-copy">📝 Copiar Texto</button>
+            <div class="btn-copy-container">
+                <button class="Btn-Corp" id="copyTextBtn">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    </div>
+                    <span class="text" id="btnText">COPIAR TEXTO</span>
+                </button>
             </div>
         </div>
 
@@ -340,316 +487,319 @@
 </div>
 
 <script>
-    const MATRICULA = 182.50;
-    const MAX_CREDITS = 11;
-
-    // --- BASE DE DATOS CORREGIDA (SEPARACIÓN EXACTA POR ESCALAS) ---
-    const pricingTables = {
-        // MEDICINA: Escala A-H
-        'medicina': { 
-            cats: { 'A': 1735, 'B': 1548, 'C': 1302, 'D': 1206, 'H': 1207 }, 
-            name: "Medicina" 
-        },
+    document.addEventListener('DOMContentLoaded', function() {
+        const VALID_PASSWORD = "Upc2026"; 
         
-        // MÚSICA: Escala Q-H
-        'musica': { 
-            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, 
-            name: "Música" 
-        },
+        // Elementos UI
+        const accessInput = document.getElementById('accessCode');
+        const loginBtn = document.getElementById('loginBtnAction');
+        const errorMsg = document.getElementById('errorMsg');
+        const overlay = document.getElementById('loginOverlay');
+        const app = document.getElementById('mainApp');
+        const helpTrigger = document.getElementById('helpTrigger');
+        const contactInfo = document.getElementById('contactInfo');
+        const customLock = document.getElementById('customLock');
+        const eyeToggle = document.getElementById('eyeToggle');
+        const eyeIcon = document.getElementById('eyeIcon');
 
-        // GRUPO ESPECIAL: Escala Completa (Q, R, S, T, U, X, Y, Z, H)
-        // Solo para: Farmacia, Ing. Industrial, Ing. Ambiental, Admin. Negocios Int., Contabilidad y Admin.
-        'grupo_especial_xyz': { 
-            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, 'H': 408 }, 
-            name: "Grupo Negocios/Ing (Completo)" 
-        },
+        // PATHS SVG PARA OJO ABIERTO Y CERRADO
+        const svgClosed = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.45-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+        const svgOpen = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
 
-        // GRUPO SALUD/ING 2: Escala Q-U, Z, H (H=526)
-        // Para: Ing. Biomédica, Ing. Gestión Minera, Odontología
-        'grupo_salud_ing_2': { 
-            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, 
-            name: "Grupo Salud/Ing (Sin X/Y)" 
-        },
-
-        // ARQUITECTURA: Escala Q-U, H
-        'arquitectura': { 
-            cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'H': 530 }, 
-            name: "Arquitectura" 
-        },
-
-        // VETERINARIA: Escala Q-U, H
-        'veterinaria': { 
-            cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'U': 661, 'H': 581 }, 
-            name: "Veterinaria" 
-        },
-
-        // MODA: Escala Q-U, H
-        'moda': { 
-            cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 605 }, 
-            name: "Moda" 
-        },
-        
-        // BIOLOGÍA: Escala Q-T, H (Sin U)
-        'biologia': { 
-            cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'H': 679 }, 
-            name: "Biología" 
-        },
-
-        // TERAPIA FÍSICA: Escala Completa + 5Z
-        'terapia_fisica': { 
-            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, '5Z': 269, 'H': 269 }, 
-            name: "Terapia Física" 
-        },
-
-        // ING. CIVIL: Escala Completa (Precios únicos)
-        'ing_civil': { 
-            cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'X': 839, 'Y': 632, 'Z': 469, 'H': 413 }, 
-            name: "Ing. Civil" 
-        },
-
-        // DERECHO: Escala Q-U, Z, H
-        'derecho': { 
-            cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'Z': 469, 'H': 530 }, 
-            name: "Derecho" 
-        },
-
-        // ENFERMERÍA: Escala Completa + N, F
-        'enfermeria': { 
-            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'N': 530, 'X': 833, 'Y': 626, 'Z': 465, 'F': 269, 'H': 269 }, 
-            name: "Enfermería" 
-        },
-
-        // CARRERAS RESTANTES (ANEXO 1): Escala Q-U, H (SIN X, Y, Z)
-        // Aplica para: Admin, Mkt, Sistemas, Software, Electrónica, Comunicaciones, etc.
-        'carreras_generales': { 
-            cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'H': 526 }, 
-            name: "Carreras Generales" 
+        // LÓGICA HOLD-TO-VIEW (Mantener para ver)
+        function showPass() {
+            accessInput.type = 'text';
+            eyeIcon.innerHTML = svgOpen;
+            eyeToggle.style.color = '#d31010';
         }
-    };
+        function hidePass() {
+            accessInput.type = 'password';
+            eyeIcon.innerHTML = svgClosed;
+            eyeToggle.style.color = '#999';
+        }
 
-    // MAPPING CORREGIDO
-    const allCareers = [
-        { name: "Medicina", key: "medicina" },
-        { name: "Música", key: "musica" },
+        // Eventos para Mouse
+        eyeToggle.addEventListener('mousedown', showPass);
+        eyeToggle.addEventListener('mouseup', hidePass);
+        eyeToggle.addEventListener('mouseleave', hidePass);
 
-        // GRUPO ESPECIAL (TIENEN X, Y, Z)
-        { name: "Farmacia y Bioquímica", key: "grupo_especial_xyz" },
-        { name: "Ingeniería Industrial", key: "grupo_especial_xyz" },
-        { name: "Ingeniería Ambiental", key: "grupo_especial_xyz" },
-        { name: "Administración y Negocios Internacionales", key: "grupo_especial_xyz" },
-        { name: "Contabilidad y Administración", key: "grupo_especial_xyz" },
+        // Eventos para Touch (Móvil)
+        eyeToggle.addEventListener('touchstart', (e) => { e.preventDefault(); showPass(); });
+        eyeToggle.addEventListener('touchend', hidePass);
 
-        // GRUPO SALUD 2
-        { name: "Ingeniería Biomédica", key: "grupo_salud_ing_2" },
-        { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing_2" },
-        { name: "Odontología", key: "grupo_salud_ing_2" },
+        // LÓGICA LOGIN
+        function checkAccess() {
+            if (accessInput.value.trim() === VALID_PASSWORD) {
+                errorMsg.style.display = 'none';
+                accessInput.style.borderColor = '#25D366'; accessInput.disabled = true;
+                eyeToggle.style.display = 'none'; // Ocultar ojo al validar
+                loginBtn.innerHTML = "ACCESO AUTORIZADO"; loginBtn.classList.add("btn-success-login");
+                
+                customLock.classList.remove("idle"); void customLock.offsetWidth; customLock.classList.add("unlocked");
 
-        // CARRERAS ESPECÍFICAS
-        { name: "Arquitectura", key: "arquitectura" },
-        { name: "Medicina Veterinaria", key: "veterinaria" },
-        { name: "Diseño y Gestión en Moda", key: "moda" },
-        { name: "Biología", key: "biologia" },
-        { name: "Terapia Física", key: "terapia_fisica" },
-        { name: "Ingeniería Civil", key: "ing_civil" },
-        { name: "Derecho", key: "derecho" },
-        { name: "Enfermería", key: "enfermeria" },
-        { name: "Nutrición y Dietética", key: "grupo_salud_ing_2" }, // Según Anexo suele ir aquí o en generales, verificado: Nutricion suele ir en Salud. Lo dejaremos en Salud 2 por precio similar H.
-
-        // CARRERAS GENERALES (SIN X, Y, Z) - DEL ANEXO 1
-        { name: "Administración", key: "carreras_generales" },
-        { name: "Administración y Agronegocios", key: "carreras_generales" },
-        { name: "Administración y Finanzas", key: "carreras_generales" },
-        { name: "Administración y Marketing", key: "carreras_generales" },
-        { name: "Administración y Recursos Humanos", key: "carreras_generales" },
-        { name: "Administración y Gerencia del Emprendimiento", key: "carreras_generales" },
-        { name: "Administración y Negocios del Deporte", key: "carreras_generales" },
-        { name: "Administración y Negocios Digitales", key: "carreras_generales" },
-        { name: "Administración y Ciencia de Datos para Negocios", key: "carreras_generales" },
-        { name: "Contabilidad y Finanzas", key: "carreras_generales" },
-        
-        // INGENIERÍAS (ANEXO 1 - SIN X/Y/Z)
-        { name: "Ingeniería de Sistemas de Información", key: "carreras_generales" },
-        { name: "Ingeniería de Software", key: "carreras_generales" },
-        { name: "Ingeniería Mecatrónica", key: "carreras_generales" },
-        { name: "Ingeniería Electrónica", key: "carreras_generales" },
-        { name: "Ingeniería de Ciberseguridad", key: "carreras_generales" },
-        { name: "Ingeniería de Gestión Empresarial", key: "carreras_generales" },
-        { name: "Ingeniería de Inteligencia Artificial", key: "carreras_generales" },
-        { name: "Ciencias de la Computación", key: "carreras_generales" },
-        
-        // OTRAS (ANEXO 1)
-        { name: "Diseño Industrial", key: "carreras_generales" },
-        { name: "Comunicación y Periodismo", key: "carreras_generales" },
-        { name: "Comunicación y Publicidad", key: "carreras_generales" },
-        { name: "Comunicación Audiovisual y Medios Interactivos", key: "carreras_generales" },
-        { name: "Comunicación e Imagen Empresarial", key: "carreras_generales" },
-        { name: "Comunicación y Marketing", key: "carreras_generales" },
-        { name: "Comunicación y Fotografía", key: "carreras_generales" },
-        { name: "Psicología", key: "carreras_generales" },
-        { name: "Economía y Finanzas", key: "carreras_generales" },
-        { name: "Economía y Negocios Internacionales", key: "carreras_generales" },
-        { name: "Economía Gerencial", key: "carreras_generales" },
-        { name: "Economía y Ciencia de Datos", key: "carreras_generales" },
-        { name: "Traducción e Interpretación Profesional", key: "carreras_generales" },
-        { name: "Educación y Gestión del Aprendizaje", key: "carreras_generales" },
-        { name: "Ciencias de la Actividad Física y el Deporte", key: "carreras_generales" },
-        { name: "Ciencias Políticas", key: "carreras_generales" },
-        { name: "Diseño Profesional Gráfico", key: "carreras_generales" },
-        { name: "Diseño Profesional de Interiores", key: "carreras_generales" },
-        { name: "Gastronomía y Gestión Culinaria", key: "carreras_generales" },
-        { name: "Hotelería y Administración", key: "carreras_generales" },
-        { name: "Turismo y Administración", key: "carreras_generales" },
-        { name: "Relaciones Internacionales", key: "carreras_generales" },
-        { name: "Artes Escénicas", key: "carreras_generales" },
-        { name: "Alumnos Libres", key: "carreras_generales" }
-    ];
-    
-    // ORDENAR ALFABÉTICAMENTE
-    allCareers.sort((a, b) => a.name.localeCompare(b.name));
-
-    const careerInput = document.getElementById('careerInput');
-    const autocompleteList = document.getElementById('autocomplete-list');
-    const categorySelect = document.getElementById('categorySelect');
-    const creditsInput = document.getElementById('creditsInput');
-    const creditBar = document.getElementById('creditBar');
-    const calcularBtn = document.getElementById('calcularBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const resultsSection = document.getElementById('resultsSection');
-    const copyContainer = document.getElementById('copyContainer');
-    const careerHelper = document.getElementById('careerHelper');
-    const generatedDate = document.getElementById('generatedDate');
-
-    let currentPricingKey = null;
-    let currentFocus = -1;
-
-    function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
-
-    careerInput.addEventListener('input', function() {
-        closeAllLists(); resetUIState();
-        const val = this.value; if (!val) return;
-        currentFocus = -1; const cleanVal = normalizeString(val);
-        const matches = allCareers.filter(c => normalizeString(c.name).includes(cleanVal));
-        matches.forEach(match => {
-            let item = document.createElement("div"); item.textContent = match.name;
-            item.addEventListener("click", () => selectCareer(match));
-            autocompleteList.appendChild(item);
-        });
-    });
-
-    function selectCareer(careerObj) {
-        careerInput.value = careerObj.name; currentPricingKey = careerObj.key;
-        updateCategories(careerObj.key); careerHelper.style.display = "block";
-        careerInput.style.borderColor = "#2ecc71"; closeAllLists();
-    }
-
-    function updateCategories(key) {
-        categorySelect.innerHTML = '<option value="">-- Selecciona Categoría --</option>';
-        categorySelect.disabled = false;
-        if (pricingTables[key]) {
-            for (let cat in pricingTables[key].cats) {
-                let option = document.createElement('option'); option.value = cat;
-                option.textContent = `Categoría ${cat}`; categorySelect.appendChild(option);
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => { overlay.style.display = 'none'; app.style.display = 'block'; app.style.animation = "fadeIn 0.8s ease-out"; }, 600);
+                }, 1000);
+            } else {
+                errorMsg.style.display = 'block'; accessInput.value = ""; accessInput.focus();
+                document.querySelector('.login-card').classList.add('shake');
+                setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 400);
             }
         }
-    }
+        loginBtn.addEventListener('click', checkAccess);
+        accessInput.addEventListener("keyup", (e) => { if(e.key==="Enter") checkAccess(); });
+        helpTrigger.addEventListener('click', () => { contactInfo.style.display = 'block'; });
 
-    function resetUIState() {
-        currentPricingKey = null; categorySelect.disabled = true;
-        categorySelect.innerHTML = '<option value="">-- Selecciona Carrera --</option>';
-        careerHelper.style.display = "none"; careerInput.style.borderColor = "#e0e0e0";
-        copyContainer.style.display = "none"; resultsSection.style.display = "none";
-        Array.from(creditBar.children).forEach(btn => btn.classList.remove('active'));
-        creditsInput.value = "";
-    }
+        // LÓGICA CALCULADORA
+        const MATRICULA = 182.50;
+        
+        const pricingTables = {
+            'medicina': { cats: { 'A': 1735, 'B': 1548, 'C': 1302, 'D': 1206, 'H': 1207 }, name: "Medicina" },
+            'musica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, name: "Música" },
+            'grupo_especial_xyz': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, 'H': 408 }, name: "Grupo Negocios/Ing (Completo)" },
+            'grupo_salud_ing_2': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, name: "Grupo Salud/Ing (Sin X/Y)" },
+            'arquitectura': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'H': 530 }, name: "Arquitectura" },
+            'veterinaria': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'U': 661, 'H': 581 }, name: "Veterinaria" },
+            'moda': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 605 }, name: "Moda" },
+            'biologia': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'H': 679 }, name: "Biología" },
+            'terapia_fisica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, '5Z': 269, 'H': 269 }, name: "Terapia Física" },
+            'ing_civil': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'X': 839, 'Y': 632, 'Z': 469, 'H': 413 }, name: "Ing. Civil" },
+            'derecho': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'Z': 469, 'H': 530 }, name: "Derecho" },
+            'enfermeria': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'N': 530, 'X': 833, 'Y': 626, 'Z': 465, 'F': 269, 'H': 269 }, name: "Enfermería" },
+            'carreras_generales': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'H': 526 }, name: "Carreras Generales" }
+        };
 
-    window.selectCredit = function(val, element) {
-        creditsInput.value = val;
-        Array.from(creditBar.children).forEach(btn => btn.classList.remove('active'));
-        element.classList.add('active');
-        if (currentPricingKey && categorySelect.value) calculate();
-    };
+        const allCareers = [
+            { name: "Medicina", key: "medicina" },
+            { name: "Música", key: "musica" },
+            { name: "Farmacia y Bioquímica", key: "grupo_especial_xyz" },
+            { name: "Ingeniería Industrial", key: "grupo_especial_xyz" },
+            { name: "Ingeniería Ambiental", key: "grupo_especial_xyz" },
+            { name: "Administración y Negocios Internacionales", key: "grupo_especial_xyz" },
+            { name: "Contabilidad y Administración", key: "grupo_especial_xyz" },
+            { name: "Ingeniería Biomédica", key: "grupo_salud_ing_2" },
+            { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing_2" },
+            { name: "Odontología", key: "grupo_salud_ing_2" },
+            { name: "Arquitectura", key: "arquitectura" },
+            { name: "Medicina Veterinaria", key: "veterinaria" },
+            { name: "Diseño y Gestión en Moda", key: "moda" },
+            { name: "Biología", key: "biologia" },
+            { name: "Terapia Física", key: "terapia_fisica" },
+            { name: "Ingeniería Civil", key: "ing_civil" },
+            { name: "Derecho", key: "derecho" },
+            { name: "Enfermería", key: "enfermeria" },
+            { name: "Nutrición y Dietética", key: "grupo_salud_ing_2" },
+            { name: "Administración", key: "carreras_generales" },
+            { name: "Administración y Agronegocios", key: "carreras_generales" },
+            { name: "Administración y Finanzas", key: "carreras_generales" },
+            { name: "Administración y Marketing", key: "carreras_generales" },
+            { name: "Administración y Recursos Humanos", key: "carreras_generales" },
+            { name: "Administración y Gerencia del Emprendimiento", key: "carreras_generales" },
+            { name: "Administración y Negocios del Deporte", key: "carreras_generales" },
+            { name: "Administración y Negocios Digitales", key: "carreras_generales" },
+            { name: "Administración y Ciencia de Datos para Negocios", key: "carreras_generales" },
+            { name: "Contabilidad y Finanzas", key: "carreras_generales" },
+            { name: "Ingeniería de Sistemas de Información", key: "carreras_generales" },
+            { name: "Ingeniería de Software", key: "carreras_generales" },
+            { name: "Ingeniería Mecatrónica", key: "carreras_generales" },
+            { name: "Ingeniería Electrónica", key: "carreras_generales" },
+            { name: "Ingeniería de Ciberseguridad", key: "carreras_generales" },
+            { name: "Ingeniería de Gestión Empresarial", key: "carreras_generales" },
+            { name: "Ingeniería de Inteligencia Artificial", key: "carreras_generales" },
+            { name: "Ciencias de la Computación", key: "carreras_generales" },
+            { name: "Diseño Industrial", key: "carreras_generales" },
+            { name: "Comunicación y Periodismo", key: "carreras_generales" },
+            { name: "Comunicación y Publicidad", key: "carreras_generales" },
+            { name: "Comunicación Audiovisual y Medios Interactivos", key: "carreras_generales" },
+            { name: "Comunicación e Imagen Empresarial", key: "carreras_generales" },
+            { name: "Comunicación y Marketing", key: "carreras_generales" },
+            { name: "Comunicación y Fotografía", key: "carreras_generales" },
+            { name: "Psicología", key: "carreras_generales" },
+            { name: "Economía y Finanzas", key: "carreras_generales" },
+            { name: "Economía y Negocios Internacionales", key: "carreras_generales" },
+            { name: "Economía Gerencial", key: "carreras_generales" },
+            { name: "Economía y Ciencia de Datos", key: "carreras_generales" },
+            { name: "Traducción e Interpretación Profesional", key: "carreras_generales" },
+            { name: "Educación y Gestión del Aprendizaje", key: "carreras_generales" },
+            { name: "Ciencias de la Actividad Física y el Deporte", key: "carreras_generales" },
+            { name: "Ciencias Políticas", key: "carreras_generales" },
+            { name: "Diseño Profesional Gráfico", key: "carreras_generales" },
+            { name: "Diseño Profesional de Interiores", key: "carreras_generales" },
+            { name: "Gastronomía y Gestión Culinaria", key: "carreras_generales" },
+            { name: "Hotelería y Administración", key: "carreras_generales" },
+            { name: "Turismo y Administración", key: "carreras_generales" },
+            { name: "Relaciones Internacionales", key: "carreras_generales" },
+            { name: "Artes Escénicas", key: "carreras_generales" },
+            { name: "Alumnos Libres", key: "carreras_generales" }
+        ];
+        allCareers.sort((a, b) => a.name.localeCompare(b.name));
 
-    function calculate() {
-        const category = categorySelect.value; const credits = parseFloat(creditsInput.value);
-        if (!currentPricingKey || !category || isNaN(credits)) return;
-        const table = pricingTables[currentPricingKey];
-        const costPerCredit = table.cats[category];
-        const totalTuition = costPerCredit * credits;
-        const b1Base = costPerCredit * 1.5;
-        let remaining = totalTuition - b1Base; if (remaining < 0) remaining = 0;
-        const fB1 = b1Base + MATRICULA; const fB2 = remaining / 2; const fB3 = remaining / 2;
-        const total = fB1 + fB2 + fB3;
+        const careerInput = document.getElementById('careerInput');
+        const autocompleteList = document.getElementById('autocomplete-list');
+        const categorySelect = document.getElementById('categorySelect');
+        const creditsInput = document.getElementById('creditsInput');
+        const creditBar = document.getElementById('creditBar');
+        const resultsSection = document.getElementById('resultsSection');
+        const careerHelper = document.getElementById('careerHelper');
+        let currentPricingKey = null;
+        let currentFocus = -1;
 
-        document.getElementById('resB1').textContent = formatCurrency(fB1);
-        document.getElementById('resB2').textContent = formatCurrency(fB2);
-        document.getElementById('resB3').textContent = formatCurrency(fB3);
-        document.getElementById('resTotalTop').textContent = formatCurrency(total);
-        document.getElementById('sumCareerName').textContent = careerInput.value;
-        document.getElementById('sumCantCred').textContent = credits;
-        document.getElementById('sumCostoCred').textContent = formatCurrency(costPerCredit);
-        document.getElementById('sumTotalBottom').textContent = formatCurrency(total);
+        function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
-        updateTimestamp(); resultsSection.style.display = 'block';
-        copyContainer.style.display = 'flex';
-        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    function formatCurrency(amount) { return "S/. " + amount.toLocaleString('es-PE', { minimumFractionDigits: 2 }); }
-    function updateTimestamp() {
-        const now = new Date();
-        generatedDate.textContent = `Generado el: ${now.toLocaleDateString()} a las ${now.toLocaleTimeString()}`;
-    }
-    function closeAllLists() { while (autocompleteList.firstChild) autocompleteList.removeChild(autocompleteList.firstChild); }
-    
-    // NAVEGACION TECLADO AUTOCOMPLETE
-    careerInput.addEventListener("keydown", function(e) {
-        let x = autocompleteList.getElementsByTagName("div");
-        if (e.key === "ArrowDown") { currentFocus++; addActive(x); }
-        else if (e.key === "ArrowUp") { currentFocus--; addActive(x); }
-        else if (e.key === "Enter") {
-            e.preventDefault();
-            if (currentFocus > -1 && x) x[currentFocus].click();
-        }
-    });
-    function addActive(x) {
-        if (!x) return false; removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (x.length - 1);
-        x[currentFocus].classList.add("autocomplete-active");
-    }
-    function removeActive(x) { for (let i = 0; i < x.length; i++) x[i].classList.remove("autocomplete-active"); }
-    document.addEventListener("click", function (e) { if (e.target !== careerInput) closeAllLists(); });
-
-    resetBtn.addEventListener('click', () => { careerInput.value = ""; resetUIState(); careerInput.focus(); });
-    calcularBtn.addEventListener('click', calculate);
-
-    document.getElementById('copyImgBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('copyImgBtn'); const orig = btn.innerHTML;
-        btn.innerHTML = '⏳ Generando...';
-        try {
-            const canvas = await html2canvas(document.getElementById('captureTarget'), { scale: 2 });
-            canvas.toBlob(async blob => {
-                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-                btn.innerHTML = '✅ Imagen Copiada'; btn.style.backgroundColor = '#128C7E';
+        careerInput.addEventListener('input', function() {
+            closeAllLists(); resetUIState();
+            const val = this.value; if (!val) return;
+            currentFocus = -1; const cleanVal = normalizeString(val);
+            const matches = allCareers.filter(c => normalizeString(c.name).includes(cleanVal));
+            
+            matches.forEach(match => {
+                let item = document.createElement("div");
+                item.textContent = match.name;
+                // --- SOLUCIÓN PARA QUE NO SE CIERRE AL CLIC ---
+                item.onmousedown = function(e) { e.preventDefault(); }; 
+                item.onclick = function() { selectCareer(match); };
+                autocompleteList.appendChild(item);
             });
-        } catch { btn.innerHTML = '❌ Error'; }
-        setTimeout(() => { btn.innerHTML = orig; btn.style.backgroundColor = ''; }, 3000);
-    });
+        });
 
-    document.getElementById('copyTextBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('copyTextBtn'); const orig = btn.innerHTML;
-        const text = `*SIMULACIÓN PENSIONES UPC - VERANO 2026* ☀️
-🎓 *Carrera:* ${careerInput.value}
-📚 *Créditos:* ${creditsInput.value}
-🏷️ *Cat:* ${categorySelect.value}
-🗓️ *B1:* ${document.getElementById('resB1').textContent}
-🗓️ *B2:* ${document.getElementById('resB2').textContent}
-🗓️ *B3:* ${document.getElementById('resB3').textContent}
-💰 *TOTAL:* ${document.getElementById('resTotalTop').textContent}
----------------------------------
-⚠️ *IMPORTANTE:* La información es referencial. Los pagos fuera de fecha generan intereses y gastos administrativos (desde B2). Más info en: https://explora.upc.edu.pe`;
-        await navigator.clipboard.writeText(text);
-        btn.innerHTML = '✅ Texto Copiado'; setTimeout(() => btn.innerHTML = orig, 3000);
+        function selectCareer(careerObj) {
+            careerInput.value = careerObj.name; 
+            currentPricingKey = careerObj.key;
+            updateCategories(careerObj.key); 
+            careerHelper.style.display = "flex";
+            careerInput.style.borderColor = "#2ecc71"; 
+            closeAllLists();
+        }
+
+        function updateCategories(key) {
+            categorySelect.innerHTML = '<option value="">-- Seleccione Categoría --</option>'; 
+            categorySelect.disabled = false;
+            
+            if (pricingTables[key]) {
+                for (let cat in pricingTables[key].cats) {
+                    let option = document.createElement('option'); 
+                    option.value = cat; 
+                    option.textContent = `Categoría ${cat}`; 
+                    categorySelect.appendChild(option);
+                }
+            }
+        }
+
+        function resetUIState() {
+            currentPricingKey = null; categorySelect.disabled = true; categorySelect.innerHTML = '<option value="">-- Seleccione Carrera --</option>';
+            careerHelper.style.display = "none"; careerInput.style.borderColor = "#e0e0e0";
+            resultsSection.style.display = "none";
+            Array.from(creditBar.children).forEach(btn => btn.classList.remove('active')); creditsInput.value = "";
+        }
+
+        window.selectCredit = function(val, element) {
+            creditsInput.value = val;
+            Array.from(creditBar.children).forEach(btn => btn.classList.remove('active')); element.classList.add('active');
+            if (currentPricingKey && categorySelect.value) calculate();
+        };
+
+        function calculate() {
+            const category = categorySelect.value; const credits = parseFloat(creditsInput.value);
+            if (!currentPricingKey || !category || isNaN(credits)) return;
+            const table = pricingTables[currentPricingKey];
+            const costPerCredit = table.cats[category];
+            const totalTuition = costPerCredit * credits;
+            const b1Base = costPerCredit * 1.5;
+            let remaining = totalTuition - b1Base; if (remaining < 0) remaining = 0;
+            const total = (b1Base + MATRICULA) + remaining;
+
+            document.getElementById('resB1').textContent = formatCurrency(b1Base + MATRICULA);
+            document.getElementById('resB2').textContent = formatCurrency(remaining / 2);
+            document.getElementById('resB3').textContent = formatCurrency(remaining / 2);
+            document.getElementById('resTotalTop').textContent = formatCurrency(total);
+            document.getElementById('sumCareerName').textContent = careerInput.value;
+            document.getElementById('sumCantCred').textContent = credits;
+            document.getElementById('sumCostoCred').textContent = formatCurrency(costPerCredit);
+            document.getElementById('sumTotalBottom').textContent = formatCurrency(total);
+
+            const now = new Date();
+            document.getElementById('generatedDate').textContent = `Generado: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+            
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function formatCurrency(amount) { return "S/. " + amount.toLocaleString('es-PE', { minimumFractionDigits: 2 }); }
+        
+        // --- FUNCIÓN BLINDADA PARA CERRAR LISTAS ---
+        function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != careerInput) {
+                    while (x[i].firstChild) { x[i].removeChild(x[i].firstChild); }
+                }
+            }
+        }
+        document.addEventListener("click", function (e) {
+            if (e.target !== careerInput && !e.target.closest('#autocomplete-list')) {
+                closeAllLists(e.target);
+            }
+        });
+        
+        careerInput.addEventListener("keydown", function(e) {
+            let x = autocompleteList.getElementsByTagName("div");
+            if (e.key === "ArrowDown") { currentFocus++; addActive(x); }
+            else if (e.key === "ArrowUp") { currentFocus--; addActive(x); }
+            else if (e.key === "Enter") { e.preventDefault(); if (currentFocus > -1 && x) x[currentFocus].click(); }
+        });
+        function addActive(x) {
+            if (!x) return false; removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0; if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) { for (let i = 0; i < x.length; i++) x[i].classList.remove("autocomplete-active"); }
+
+        document.getElementById('resetBtn').addEventListener('click', () => { careerInput.value = ""; resetUIState(); careerInput.focus(); });
+        document.getElementById('calcularBtn').addEventListener('click', calculate);
+
+        // FUNCIONALIDAD COPIAR TEXTO (ACTUALIZADA)
+        document.getElementById('copyTextBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('copyTextBtn'); 
+            const btnText = document.getElementById('btnText');
+            const originalText = "COPIAR TEXTO";
+            const svgIcon = btn.querySelector('svg');
+            
+            const textToCopy = `*SIMULADOR PENSIONES AC 2026-0*
+-----------------------------------
+🎓 Carrera: ${careerInput.value}
+📚 Créditos: ${creditsInput.value}
+🏷️ Categoría: ${categorySelect.value}
+-----------------------------------
+🗓️ *CRONOGRAMA:*
+• Boleta 1: ${document.getElementById('resB1').textContent} (15/Dic)
+• Boleta 2: ${document.getElementById('resB2').textContent} (30/Ene)
+• Boleta 3: ${document.getElementById('resB3').textContent} (27/Feb)
+
+💰 *TOTAL INVERSIÓN: ${document.getElementById('resTotalTop').textContent}*
+-----------------------------------
+Generado por herramienta interna.`;
+
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                
+                // Animación de Éxito (Verde)
+                btn.classList.add('success');
+                btnText.textContent = "¡COPIADO!";
+                // Cambiar icono
+                const originalIcon = svgIcon.innerHTML;
+                svgIcon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>';
+
+                setTimeout(() => {
+                    btn.classList.remove('success');
+                    btnText.textContent = originalText;
+                    svgIcon.innerHTML = originalIcon;
+                }, 2000);
+            } catch (err) {
+                console.error('Error al copiar', err);
+                btnText.textContent = "ERROR AL COPIAR";
+            }
+        });
     });
 </script>
 </body>
