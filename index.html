@@ -504,7 +504,7 @@
 
         // PATHS SVG PARA OJO ABIERTO Y CERRADO
         const svgClosed = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.45-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
-        const svgOpen = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+        const svgOpen = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
 
         // LÓGICA HOLD-TO-VIEW (Mantener para ver)
         function showPass() {
@@ -559,9 +559,10 @@
             'musica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, name: "Música" },
             'grupo_especial_xyz': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, 'H': 408 }, name: "Grupo Negocios/Ing (Completo)" },
             'grupo_salud_ing_2': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, name: "Grupo Salud/Ing (Sin X/Y)" },
+            'biomedica_odont_minera': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 605 }, name: "Ing. Biomédica / Odontología / Gestión Minera" },
+            'moda': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 707 }, name: "Diseño y Gestión en Moda" },
             'arquitectura': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'H': 530 }, name: "Arquitectura" },
             'veterinaria': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'U': 661, 'H': 581 }, name: "Veterinaria" },
-            'moda': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 605 }, name: "Moda" },
             'biologia': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'H': 679 }, name: "Biología" },
             'terapia_fisica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, '5Z': 269, 'H': 269 }, name: "Terapia Física" },
             'ing_civil': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'X': 839, 'Y': 632, 'Z': 469, 'H': 413 }, name: "Ing. Civil" },
@@ -578,9 +579,9 @@
             { name: "Ingeniería Ambiental", key: "grupo_especial_xyz" },
             { name: "Administración y Negocios Internacionales", key: "grupo_especial_xyz" },
             { name: "Contabilidad y Administración", key: "grupo_especial_xyz" },
-            { name: "Ingeniería Biomédica", key: "grupo_salud_ing_2" },
-            { name: "Ingeniería de Gestión Minera", key: "grupo_salud_ing_2" },
-            { name: "Odontología", key: "grupo_salud_ing_2" },
+            { name: "Ingeniería Biomédica", key: "biomedica_odont_minera" },
+            { name: "Ingeniería de Gestión Minera", key: "biomedica_odont_minera" },
+            { name: "Odontología", key: "biomedica_odont_minera" },
             { name: "Arquitectura", key: "arquitectura" },
             { name: "Medicina Veterinaria", key: "veterinaria" },
             { name: "Diseño y Gestión en Moda", key: "moda" },
