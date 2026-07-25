@@ -36,110 +36,19 @@
         .icon-md { width: 20px; height: 20px; }
         .icon-lg { width: 24px; height: 24px; }
 
-        /* --- PANTALLA DE BLOQUEO --- */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #1a1a1a 0%, var(--upc-red-dark) 100%);
-            z-index: 999999;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column;
-            transition: opacity 0.6s ease;
-        }
-        .login-card {
-            background: rgba(255, 255, 255, 0.98); padding: 50px 40px; 
-            border-radius: 16px; text-align: center; max-width: 360px; width: 90%;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative;
-        }
-        .login-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
-            background: var(--upc-red); border-radius: 16px 16px 0 0;
-        }
-
-        /* CANDADO ANIMADO */
-        .lock-container { position: relative; width: 60px; height: 80px; margin: 0 auto 20px auto; }
-        .lock-shackle {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 40px; height: 35px;
-            border: 6px solid #bdc3c7; border-radius: 30px 30px 0 0; border-bottom: none;
-            box-sizing: border-box; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1;
-        }
-        .lock-body {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
-            background: linear-gradient(135deg, var(--upc-red), var(--upc-red-dark));
-            border-radius: 8px; z-index: 2;
-            box-shadow: 0 8px 15px rgba(211, 16, 16, 0.3);
-            display: flex; justify-content: center; align-items: center;
-        }
-        .lock-keyhole { width: 10px; height: 10px; background: rgba(0,0,0,0.2); border-radius: 50%; position: relative; }
-        .lock-keyhole::after {
-            content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 8px solid rgba(0,0,0,0.2);
-        }
-
-        .lock-container.idle .lock-body { animation: bodyPulse 3s infinite ease-in-out; }
-        @keyframes bodyPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 8px 15px rgba(211, 16, 16, 0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 12px 25px rgba(211, 16, 16, 0.5); }
-        }
-        .lock-container.unlocked .lock-body { background: #27ae60; }
-        .lock-container.unlocked .lock-shackle { transform: translateX(-50%) translateY(-12px) rotateY(180deg); border-color: #ecf0f1; }
-
-        /* --- WRAPPER PARA INPUT DE CONTRASEÑA --- */
-        .password-input-wrapper {
-            position: relative;
-            width: 85%;
-            margin: 25px auto;
-        }
-
-        .login-input {
-            width: 100%; 
-            padding: 12px 40px 12px 12px; /* Espacio extra a la derecha para el ojo */
-            margin: 0; 
-            display: block;
-            border: 2px solid #e0e0e0; 
-            border-radius: 8px; font-size: 0.95rem; text-align: center; font-weight: 600; outline: none; transition: all 0.3s;
-            box-sizing: border-box;
-        }
-        .login-input:focus { border-color: var(--upc-red); }
-
-        /* ÍCONO DEL OJO */
-        .eye-toggle {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            color: #999;
-            transition: color 0.3s;
-            z-index: 10;
-        }
-        .eye-toggle:hover { color: var(--upc-red); }
-        .eye-toggle svg { width: 100%; height: 100%; }
-
-        .login-btn {
-            background: var(--text-dark); color: white; border: none; padding: 14px; 
-            border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; width: 100%; 
-            transition: all 0.3s; text-transform: uppercase;
-        }
-        .login-btn:hover { background: var(--upc-red); }
-        .btn-success-login { background-color: var(--success-green) !important; pointer-events: none; }
-        .error-msg { color: #d31010; font-size: 0.8rem; display: none; margin-top: 15px; font-weight: 600; }
-        .help-link { display: block; margin-top: 20px; font-size: 0.75rem; color: #888; text-decoration: underline; cursor: pointer; }
-        .contact-info { display: none; margin-top: 15px; font-size: 0.8rem; color: #555; background: #f4f4f4; padding: 10px; border-radius: 6px; }
-
         /* --- APP PRINCIPAL --- */
         .main-wrapper { 
-            display: none; max-width: 900px; margin: 0 auto; 
+            max-width: 900px; margin: 0 auto; 
             background-color: var(--white); border-radius: 12px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.08); overflow: visible; 
             position: relative;
+            animation: fadeIn 0.8s ease-out; /* Animación de entrada directa */
         }
 
         .header { 
             background: linear-gradient(135deg, var(--upc-red) 0%, var(--upc-red-dark) 100%); 
             color: white; padding: 30px; text-align: center; 
+            border-radius: 12px 12px 0 0;
         }
         .header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
         .header p { margin: 6px 0 0; opacity: 0.9; font-size: 0.9rem; font-weight: 500; }
@@ -301,36 +210,9 @@
         }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
-
-<div id="loginOverlay">
-    <div class="login-card">
-        <div id="customLock" class="lock-container idle">
-            <div class="lock-shackle"></div>
-            <div class="lock-body"><div class="lock-keyhole"></div></div>
-        </div>
-        
-        <h2 style="color: var(--upc-red); font-weight: 800; font-size: 1.3rem; text-transform: uppercase;">Simulador Pensiones AC 2026-0</h2>
-        
-        <div class="password-input-wrapper">
-            <input type="password" id="accessCode" class="login-input" placeholder="Contraseña" autocomplete="new-password">
-            <span id="eyeToggle" class="eye-toggle" title="Mantener para ver contraseña">
-                <svg id="eyeIcon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.45-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
-                </svg>
-            </span>
-        </div>
-
-        <button id="loginBtnAction" class="login-btn">Iniciar Sesión</button>
-        <p id="errorMsg" class="error-msg">Credenciales incorrectas</p>
-        <span class="help-link" id="helpTrigger">Solicitar Acceso</span>
-        <div id="contactInfo" class="contact-info">Administrador: <strong>José Carranza</strong></div>
-    </div>
-</div>
 
 <div class="main-wrapper" id="mainApp">
     
@@ -488,69 +370,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const VALID_PASSWORD = "Upc2026"; 
-        
-        // Elementos UI
-        const accessInput = document.getElementById('accessCode');
-        const loginBtn = document.getElementById('loginBtnAction');
-        const errorMsg = document.getElementById('errorMsg');
-        const overlay = document.getElementById('loginOverlay');
-        const app = document.getElementById('mainApp');
-        const helpTrigger = document.getElementById('helpTrigger');
-        const contactInfo = document.getElementById('contactInfo');
-        const customLock = document.getElementById('customLock');
-        const eyeToggle = document.getElementById('eyeToggle');
-        const eyeIcon = document.getElementById('eyeIcon');
-
-        // PATHS SVG PARA OJO ABIERTO Y CERRADO
-        const svgClosed = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.45-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
-        const svgOpen = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
-
-        // LÓGICA HOLD-TO-VIEW (Mantener para ver)
-        function showPass() {
-            accessInput.type = 'text';
-            eyeIcon.innerHTML = svgOpen;
-            eyeToggle.style.color = '#d31010';
-        }
-        function hidePass() {
-            accessInput.type = 'password';
-            eyeIcon.innerHTML = svgClosed;
-            eyeToggle.style.color = '#999';
-        }
-
-        // Eventos para Mouse
-        eyeToggle.addEventListener('mousedown', showPass);
-        eyeToggle.addEventListener('mouseup', hidePass);
-        eyeToggle.addEventListener('mouseleave', hidePass);
-
-        // Eventos para Touch (Móvil)
-        eyeToggle.addEventListener('touchstart', (e) => { e.preventDefault(); showPass(); });
-        eyeToggle.addEventListener('touchend', hidePass);
-
-        // LÓGICA LOGIN
-        function checkAccess() {
-            if (accessInput.value.trim() === VALID_PASSWORD) {
-                errorMsg.style.display = 'none';
-                accessInput.style.borderColor = '#25D366'; accessInput.disabled = true;
-                eyeToggle.style.display = 'none'; // Ocultar ojo al validar
-                loginBtn.innerHTML = "ACCESO AUTORIZADO"; loginBtn.classList.add("btn-success-login");
-                
-                customLock.classList.remove("idle"); void customLock.offsetWidth; customLock.classList.add("unlocked");
-
-                setTimeout(() => {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => { overlay.style.display = 'none'; app.style.display = 'block'; app.style.animation = "fadeIn 0.8s ease-out"; }, 600);
-                }, 1000);
-            } else {
-                errorMsg.style.display = 'block'; accessInput.value = ""; accessInput.focus();
-                document.querySelector('.login-card').classList.add('shake');
-                setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 400);
-            }
-        }
-        loginBtn.addEventListener('click', checkAccess);
-        accessInput.addEventListener("keyup", (e) => { if(e.key==="Enter") checkAccess(); });
-        helpTrigger.addEventListener('click', () => { contactInfo.style.display = 'block'; });
-
         // LÓGICA CALCULADORA
         const MATRICULA = 182.50;
         
@@ -657,7 +476,6 @@
             matches.forEach(match => {
                 let item = document.createElement("div");
                 item.textContent = match.name;
-                // --- SOLUCIÓN PARA QUE NO SE CIERRE AL CLIC ---
                 item.onmousedown = function(e) { e.preventDefault(); }; 
                 item.onclick = function() { selectCareer(match); };
                 autocompleteList.appendChild(item);
@@ -728,7 +546,6 @@
 
         function formatCurrency(amount) { return "S/. " + amount.toLocaleString('es-PE', { minimumFractionDigits: 2 }); }
         
-        // --- FUNCIÓN BLINDADA PARA CERRAR LISTAS ---
         function closeAllLists(elmnt) {
             var x = document.getElementsByClassName("autocomplete-items");
             for (var i = 0; i < x.length; i++) {
@@ -759,7 +576,6 @@
         document.getElementById('resetBtn').addEventListener('click', () => { careerInput.value = ""; resetUIState(); careerInput.focus(); });
         document.getElementById('calcularBtn').addEventListener('click', calculate);
 
-        // FUNCIONALIDAD COPIAR TEXTO (ACTUALIZADA)
         document.getElementById('copyTextBtn').addEventListener('click', async () => {
             const btn = document.getElementById('copyTextBtn'); 
             const btnText = document.getElementById('btnText');
@@ -784,10 +600,8 @@ Generado por herramienta interna.`;
             try {
                 await navigator.clipboard.writeText(textToCopy);
                 
-                // Animación de Éxito (Verde)
                 btn.classList.add('success');
                 btnText.textContent = "¡COPIADO!";
-                // Cambiar icono
                 const originalIcon = svgIcon.innerHTML;
                 svgIcon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>';
 
