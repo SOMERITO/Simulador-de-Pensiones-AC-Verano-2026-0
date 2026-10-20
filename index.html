@@ -1132,7 +1132,6 @@
         }
 
         function calculateManual(){
-            const resultWasVisible=resultsSection.style.display==="block";
             const data=getManualCalculationData(true);if(!data)return;
             const amounts=[];let scheduledCents=0;
             for(let i=1;i<=data.count;i++){
@@ -1160,7 +1159,6 @@
             document.getElementById("overpaymentNotice").style.display="none";manualAlert.style.display="none";
             const now=new Date();document.getElementById("generatedDate").textContent="Generado: "+now.toLocaleDateString()+" "+now.toLocaleTimeString();
             resultsSection.style.display="block";
-            if(!resultWasVisible)resultsSection.scrollIntoView({behavior:"smooth",block:"nearest"});
         }
 
         function calculate() {
