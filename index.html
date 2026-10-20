@@ -245,6 +245,7 @@
                 <select id="categorySelect" class="form-control" disabled>
                     <option value="">-- Seleccione carrera --</option>
                 </select>
+                <small id="workingStudentNote" style="display:none; font-size:0.75rem; color:#795548; margin-top:6px; line-height:1.4;">Nota: las categorías Z y 5Z no aplican para Derecho en la modalidad Working Student.</small>
             </div>
 
             <div class="form-group">
@@ -377,9 +378,9 @@
             'medicina': { cats: { 'A': 1735, 'B': 1548, 'C': 1302, 'D': 1206, 'H': 1207 }, name: "Medicina" },
             'musica': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'H': 615 }, name: "Música" },
             'grupo_especial_xyz': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'X': 833, 'Y': 626, 'Z': 465, 'H': 408 }, name: "Grupo Negocios/Ing (Completo)" },
-            'grupo_salud_ing_2': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, name: "Grupo Salud/Ing (Sin X/Y)" },
+            'grupo_salud_ing_2': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'Z': 469, 'H': 526 }, name: "Ing. Ambiental / Ing. Industrial / Administración y Negocios Internacionales" },
             'biomedica_odont_minera': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 605 }, name: "Ing. Biomédica / Odontología / Gestión Minera" },
-            'moda': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'U': 687, 'H': 707 }, name: "Diseño y Gestión en Moda" },
+            'moda': { cats: { 'Q': 1426, 'R': 1183, 'S': 1007, 'T': 868, 'H': 707 }, name: "Diseño y Gestión en Moda" },
             'arquitectura': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'H': 530 }, name: "Arquitectura" },
             'veterinaria': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'U': 661, 'H': 581 }, name: "Veterinaria" },
             'biologia': { cats: { 'Q': 1367, 'R': 1137, 'S': 968, 'T': 834, 'H': 679 }, name: "Biología" },
@@ -387,6 +388,7 @@
             'ing_civil': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'X': 839, 'Y': 632, 'Z': 469, 'H': 413 }, name: "Ing. Civil" },
             'derecho': { cats: { 'Q': 1248, 'R': 1040, 'S': 883, 'T': 762, 'U': 604, 'Z': 469, 'H': 530 }, name: "Derecho" },
             'enfermeria': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'N': 530, 'X': 833, 'Y': 626, 'Z': 465, 'F': 269, 'H': 269 }, name: "Enfermería" },
+            'working_student': { cats: { 'Q': 1112, 'R': 927, 'S': 787, 'T': 686, 'U': 433, 'Z': 360, '5Q': 1091, '5R': 909, '5S': 772, '5T': 673, '5U': 424, '5Z': 353 }, name: "Working Student" },
             'carreras_generales': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'H': 526 }, name: "Carreras Generales" }
         };
 
@@ -394,13 +396,13 @@
             { name: "Medicina", key: "medicina" },
             { name: "Música", key: "musica" },
             { name: "Farmacia y Bioquímica", key: "grupo_especial_xyz" },
-            { name: "Ingeniería Industrial", key: "grupo_especial_xyz" },
-            { name: "Ingeniería Ambiental", key: "grupo_especial_xyz" },
-            { name: "Administración y Negocios Internacionales", key: "grupo_especial_xyz" },
+            { name: "Ingeniería Industrial", key: "grupo_salud_ing_2" },
+            { name: "Ingeniería Ambiental", key: "grupo_salud_ing_2" },
+            { name: "Administración y Negocios Internacionales", key: "grupo_salud_ing_2" },
             { name: "Contabilidad y Administración", key: "grupo_especial_xyz" },
             { name: "Ingeniería Biomédica", key: "biomedica_odont_minera" },
             { name: "Ingeniería de Gestión Minera", key: "biomedica_odont_minera" },
-            { name: "Odontología", key: "biomedica_odont_minera" },
+            { name: "Odontología", key: "veterinaria" },
             { name: "Arquitectura", key: "arquitectura" },
             { name: "Medicina Veterinaria", key: "veterinaria" },
             { name: "Diseño y Gestión en Moda", key: "moda" },
@@ -409,7 +411,7 @@
             { name: "Ingeniería Civil", key: "ing_civil" },
             { name: "Derecho", key: "derecho" },
             { name: "Enfermería", key: "enfermeria" },
-            { name: "Nutrición y Dietética", key: "grupo_salud_ing_2" },
+            { name: "Nutrición y Dietética", key: "carreras_generales" },
             { name: "Administración", key: "carreras_generales" },
             { name: "Administración y Agronegocios", key: "carreras_generales" },
             { name: "Administración y Finanzas", key: "carreras_generales" },
@@ -451,6 +453,7 @@
             { name: "Turismo y Administración", key: "carreras_generales" },
             { name: "Relaciones Internacionales", key: "carreras_generales" },
             { name: "Artes Escénicas", key: "carreras_generales" },
+            { name: "Alumnos Working Student", key: "working_student" },
             { name: "Alumnos Libres", key: "carreras_generales" }
         ];
         allCareers.sort((a, b) => a.name.localeCompare(b.name));
@@ -494,6 +497,8 @@
         function updateCategories(key) {
             categorySelect.innerHTML = '<option value="">-- Seleccione Categoría --</option>'; 
             categorySelect.disabled = false;
+            const workingStudentNote = document.getElementById('workingStudentNote');
+            if (workingStudentNote) workingStudentNote.style.display = key === 'working_student' ? 'block' : 'none';
             
             if (pricingTables[key]) {
                 for (let cat in pricingTables[key].cats) {
