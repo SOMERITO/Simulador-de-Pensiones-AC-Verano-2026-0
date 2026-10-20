@@ -453,7 +453,16 @@
             { name: "Turismo y Administración", key: "carreras_generales" },
             { name: "Relaciones Internacionales", key: "carreras_generales" },
             { name: "Artes Escénicas", key: "carreras_generales" },
-            { name: "Alumnos Working Student", key: "working_student" },
+            { name: "Negocios Internacionales (WS)", key: "working_student" },
+            { name: "Marketing (WS)", key: "working_student" },
+            { name: "Ingeniería Industrial (WS)", key: "working_student" },
+            { name: "Derecho (WS)", key: "working_student" },
+            { name: "Administración de Empresas (WS)", key: "working_student" },
+            { name: "Contabilidad (WS)", key: "working_student" },
+            { name: "Ingeniería Civil (WS)", key: "working_student" },
+            { name: "Administración de Banca y Finanzas (WS)", key: "working_student" },
+            { name: "Ingeniería de Sistemas (WS)", key: "working_student" },
+            { name: "Administración y Recursos Humanos (WS)", key: "working_student" },
             { name: "Alumnos Libres", key: "carreras_generales" }
         ];
         allCareers.sort((a, b) => a.name.localeCompare(b.name));
@@ -488,20 +497,22 @@
         function selectCareer(careerObj) {
             careerInput.value = careerObj.name; 
             currentPricingKey = careerObj.key;
-            updateCategories(careerObj.key); 
+            updateCategories(careerObj.key, careerObj.name); 
             careerHelper.style.display = "flex";
             careerInput.style.borderColor = "#2ecc71"; 
             closeAllLists();
         }
 
-        function updateCategories(key) {
+        function updateCategories(key, careerName = "") {
             categorySelect.innerHTML = '<option value="">-- Seleccione Categoría --</option>'; 
             categorySelect.disabled = false;
+            const isDerechoWS = key === 'working_student' && normalizeString(careerName).includes('derecho');
             const workingStudentNote = document.getElementById('workingStudentNote');
-            if (workingStudentNote) workingStudentNote.style.display = key === 'working_student' ? 'block' : 'none';
+            if (workingStudentNote) workingStudentNote.style.display = isDerechoWS ? 'block' : 'none';
             
             if (pricingTables[key]) {
                 for (let cat in pricingTables[key].cats) {
+                    if (isDerechoWS && (cat === 'Z' || cat === '5Z')) continue;
                     let option = document.createElement('option'); 
                     option.value = cat; 
                     option.textContent = `Categoría ${cat}`; 
