@@ -76,7 +76,39 @@
         }
         .career-filter-btn:hover { border-color: var(--upc-red); color: var(--upc-red); }
         .career-filter-btn.active { background: var(--upc-red); border-color: var(--upc-red); color: white; }
-        .career-filter-btn:focus-visible { outline: 2px solid var(--upc-red); outline-offset: 2px; } 
+        .career-filter-btn:focus-visible { outline: 2px solid var(--upc-red); outline-offset: 2px; }
+        .period-selector { max-width: 100% !important; }
+        .period-selector .career-filter-buttons { width: 100%; }
+        .period-selector .career-filter-btn { min-width: 0; padding: 10px 8px; font-size: 0.76rem; }
+        .manual-panel { margin: 0 0 26px; padding: 24px; border: 1px solid #eadada; border-radius: 12px; background: linear-gradient(180deg,#fffafa,#fff); box-shadow: 0 6px 22px rgba(50,20,20,.045); }
+        .manual-panel-title { font-size: 1.05rem; font-weight: 800; color: var(--upc-red); margin-bottom: 5px; }
+        .manual-panel-intro, .manual-help { font-size: .8rem; color: var(--text-light); line-height: 1.6; }
+        .manual-panel-intro { margin: 0 0 20px; } .manual-help { margin: 12px 0 18px; }
+        .manual-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 16px; }
+        .manual-grid .form-group { min-width: 0; }
+        .manual-override-label { display:flex; align-items:center; gap:8px; font-size:.75rem; font-weight:700; color:var(--text-light); line-height:1.4; margin-bottom:8px; }
+        .manual-override-label input { accent-color:var(--upc-red); }
+        .manual-actions { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:12px; margin-top:20px; }
+        .manual-actions .btn-base { text-transform:none; letter-spacing:0; padding:12px; }
+        .manual-installments-title { font-size:.85rem; font-weight:800; color:var(--text-dark); margin:24px 0 10px; }
+        .manual-installments-editor { display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:12px; }
+        .manual-installment-editor-row { border:1px solid var(--border-color); background:#fff; padding:12px; border-radius:8px; }
+        .manual-installment-editor-title { font-weight:800; font-size:.8rem; margin-bottom:10px; color:var(--text-dark); }
+        .manual-installment-fields { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .manual-installment-fields .form-group { min-width:0; }
+        .manual-installment-fields .form-group:first-child { grid-column:1 / -1; }
+        .manual-installment-fields label { font-size:.68rem; margin-bottom:5px; }
+        .manual-installment-fields .form-control { padding:9px 10px; font-size:.8rem; }
+        .manual-alert { margin-top:14px; padding:12px 14px; border-radius:7px; background:#fff8e1; color:#795548; border:1px solid #f2cf72; font-size:.8rem; line-height:1.5; }
+        .manual-notes-result { font-size:.78rem; line-height:1.5; margin:12px 0 0; white-space:pre-wrap; }
+        @media (max-width:640px) {
+            .period-selector .career-filter-buttons { flex-wrap:wrap; }
+            .period-selector .career-filter-btn { flex:1 1 calc(50% - 8px); }
+            .manual-panel { padding:16px; }
+            .manual-actions { grid-template-columns:1fr; }
+            .manual-installment-fields { grid-template-columns:1fr; }
+            .manual-installment-fields .form-group:first-child { grid-column:auto; }
+        } 
         
         .form-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
@@ -446,15 +478,66 @@
             </div>
         </div>
 
-        <div class="form-group period-selector" style="margin-bottom:24px; max-width:560px;">
+        <div class="form-group period-selector" style="margin-bottom:24px; max-width:100%;">
             <label>Periodo académico</label>
             <div class="career-filter-buttons" role="group" aria-label="Seleccionar periodo académico">
                 <button type="button" id="periodSummerBtn" class="career-filter-btn active" aria-pressed="true">Verano 2026-0</button>
                 <button type="button" id="periodRegular20261Btn" class="career-filter-btn" aria-pressed="false">Periodo regular 2026-1</button>
                 <button type="button" id="periodRegular20262Btn" class="career-filter-btn" aria-pressed="false">Periodo regular 2026-2</button>
+                <button type="button" id="periodManualBtn" class="career-filter-btn" aria-pressed="false">Personalizado</button>
             </div>
             <small id="periodHelp" style="font-size:0.75rem; color:#5f6368; line-height:1.5;">Verano: matrícula S/ 182.50 y tres boletas.</small>
         </div>
+
+        <section id="manualPanel" class="manual-panel" style="display:none;" aria-labelledby="manualPanelTitle">
+            <div id="manualPanelTitle" class="manual-panel-title">Modo personalizado</div>
+            <p class="manual-panel-intro">Registra los datos del caso y elige una plantilla de cálculo. Después de aplicarla, puedes editar cada importe, concepto y fecha de vencimiento manualmente, sin que el simulador vuelva a sobrescribir tus ajustes.</p>
+            <div class="manual-grid">
+                <div class="form-group"><label for="manualCareer">Carrera o concepto</label><input id="manualCareer" class="form-control" type="text" placeholder="Ej. Contabilidad y Administración"></div>
+                <div class="form-group"><label for="manualCategory">Categoría de pago</label><input id="manualCategory" class="form-control" type="text" placeholder="Ej. U (opcional)"></div>
+                <div class="form-group"><label for="manualCredits">Cantidad de créditos</label><input id="manualCredits" class="form-control" type="number" min="0" step="1" value="0"></div>
+                <div class="form-group"><label for="manualMatricula">Costo de matrícula (S/)</label><input id="manualMatricula" class="form-control" type="number" min="0" step="0.01" value="365.00"></div>
+                <div class="form-group"><label for="manualCostPerCredit">Costo por crédito (S/)</label><input id="manualCostPerCredit" class="form-control" type="number" min="0" step="0.01" value="0.00"></div>
+                <div class="form-group"><label for="manualRegularPension">Pensión regular de referencia (S/)</label><input id="manualRegularPension" class="form-control" type="number" min="0" step="0.01" value="0.00"></div>
+                <div class="form-group"><label for="manualFormula">Plantilla para la primera boleta</label>
+                    <select id="manualFormula" class="form-control">
+                        <option value="matricula_regular" selected>Matrícula + pensión regular</option>
+                        <option value="matricula_1_5_credit">Matrícula + 1.5 créditos</option>
+                        <option value="matricula_only">Solo matrícula</option>
+                        <option value="manual_b1">Respetar importe de B1 ingresado</option>
+                    </select>
+                </div>
+                <div class="form-group"><label for="manualInstallmentCount">Cantidad de boletas (1 a 12)</label>
+                    <select id="manualInstallmentCount" class="form-control">
+                        <option value="1">1 boleta</option><option value="2">2 boletas</option><option value="3">3 boletas</option>
+                        <option value="4">4 boletas</option><option value="5" selected>5 boletas</option><option value="6">6 boletas</option>
+                        <option value="7">7 boletas</option><option value="8">8 boletas</option><option value="9">9 boletas</option>
+                        <option value="10">10 boletas</option><option value="11">11 boletas</option><option value="12">12 boletas</option>
+                    </select>
+                </div>
+                <div class="form-group"><label for="manualDistribution">Distribución de las boletas restantes</label>
+                    <select id="manualDistribution" class="form-control">
+                        <option value="equal" selected>Distribuir saldo en partes iguales</option>
+                        <option value="zero">Dejar las restantes en S/ 0.00</option>
+                        <option value="preserve">No modificarlas (las editaré manualmente)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="manual-override-label" for="manualUseCycleTotalOverride"><input id="manualUseCycleTotalOverride" type="checkbox"> Definir total del ciclo manualmente</label>
+                    <input id="manualCycleTotal" class="form-control" type="number" min="0" step="0.01" value="" placeholder="Total del ciclo (S/)" disabled>
+                    <small style="font-size:.7rem;color:#6b7280;line-height:1.45;margin-top:5px;">El total manual debe incluir la matrícula.</small>
+                </div>
+            </div>
+            <div class="manual-actions">
+                <button type="button" id="manualApplyTemplateBtn" class="btn-base btn-calc">Aplicar fórmula y generar cuotas</button>
+                <button type="button" id="manualClearAmountsBtn" class="btn-base btn-reset">Limpiar importes de las boletas</button>
+            </div>
+            <p class="manual-help">La fórmula solo se aplica cuando pulsas el botón. Los importes de todas las boletas son editables. Las fechas se dejan vacías para no asumir un calendario no confirmado.</p>
+            <div class="manual-installments-title">Detalle editable de cada boleta</div>
+            <div id="manualInstallmentsEditor" class="manual-installments-editor"></div>
+            <div class="form-group" style="margin-top:18px;"><label for="manualNotes">Observaciones del asesor (opcional)</label><textarea id="manualNotes" class="form-control" rows="3" placeholder="Excepciones, acuerdos, descuentos, trámites o cualquier detalle relevante del caso."></textarea></div>
+            <div id="manualAlert" class="manual-alert" role="status" style="display:none;"></div>
+        </section>
 
         <div class="controls-grid">
             <div class="form-group career-group">
@@ -512,21 +595,21 @@
                     <div>
                         <div class="card-title">Cronograma de Pagos</div>
                         <div class="installment-cards">
-                            <div class="inst-row">
+                            <div class="inst-row" id="rowB1">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 1 (B1)</span>
                                     <span class="inst-date" id="dateB1">Vencimiento: 15/12/2025 (Incluye Matrícula)</span>
                                 </div>
                                 <span class="inst-amount" id="resB1">S/. 0.00</span>
                             </div>
-                            <div class="inst-row">
+                            <div class="inst-row" id="rowB2">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 2 (B2)</span>
                                     <span class="inst-date" id="dateB2">Vencimiento: 30/01/2026</span>
                                 </div>
                                 <span class="inst-amount" id="resB2">S/. 0.00</span>
                             </div>
-                            <div class="inst-row">
+                            <div class="inst-row" id="rowB3">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 3 (B3)</span>
                                     <span class="inst-date" id="dateB3">Vencimiento: 27/02/2026</span>
@@ -547,6 +630,13 @@
                                 </div>
                                 <span class="inst-amount" id="resB5">S/. 0.00</span>
                             </div>
+                            <div class="inst-row" id="rowB6" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 6 (B6)</span><span class="inst-date" id="dateB6">Fecha no definida</span></div><span class="inst-amount" id="resB6">S/. 0.00</span></div>
+                            <div class="inst-row" id="rowB7" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 7 (B7)</span><span class="inst-date" id="dateB7">Fecha no definida</span></div><span class="inst-amount" id="resB7">S/. 0.00</span></div>
+                            <div class="inst-row" id="rowB8" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 8 (B8)</span><span class="inst-date" id="dateB8">Fecha no definida</span></div><span class="inst-amount" id="resB8">S/. 0.00</span></div>
+                            <div class="inst-row" id="rowB9" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 9 (B9)</span><span class="inst-date" id="dateB9">Fecha no definida</span></div><span class="inst-amount" id="resB9">S/. 0.00</span></div>
+                            <div class="inst-row" id="rowB10" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 10 (B10)</span><span class="inst-date" id="dateB10">Fecha no definida</span></div><span class="inst-amount" id="resB10">S/. 0.00</span></div>
+                            <div class="inst-row" id="rowB11" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 11 (B11)</span><span class="inst-date" id="dateB11">Fecha no definida</span></div><span class="inst-amount" id="resB11">S/. 0.00</span></div>
+                            <div class="inst-row" id="rowB12" style="display:none;"><div class="inst-info"><span class="inst-label">Boleta 12 (B12)</span><span class="inst-date" id="dateB12">Fecha no definida</span></div><span class="inst-amount" id="resB12">S/. 0.00</span></div>
                             <div class="inst-row total">
                                 <div class="inst-info">
                                     <span class="inst-label" id="totalScheduleLabel">TOTAL PERÍODO</span>
@@ -564,10 +654,8 @@
                                 <span class="summary-label">Carrera</span>
                                 <span class="summary-val" id="sumCareerName">-</span>
                             </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Créditos</span>
-                                <span class="summary-val"><span id="sumCantCred">0</span></span>
-                            </div>
+                            <div class="summary-item"><span class="summary-label">Créditos</span><span class="summary-val"><span id="sumCantCred">0</span></span></div>
+                            <div class="summary-item"><span class="summary-label">Categoría</span><span class="summary-val" id="sumCategory">-</span></div>
                             <div class="summary-item">
                                 <span class="summary-label">Costo Crédito</span>
                                 <span class="summary-val" id="sumCostoCred">S/. 0.00</span>
@@ -580,9 +668,8 @@
                                 <span class="summary-label" id="sumTotalLabel">Total</span>
                                 <span class="summary-val" id="sumTotalBottom">S/. 0.00</span>
                             </div>
-                            <p id="calculationNote" style="font-size: 0.7rem; color: #999; margin-top: 15px; text-align: center;">
-                                Nota: B1 incluye Matrícula + 1.5 créditos.
-                            </p>
+                            <p id="calculationNote" style="font-size: 0.7rem; color: #999; margin-top: 15px; text-align: center;">Nota: B1 incluye matrícula + 1.5 créditos.</p>
+                            <p id="manualNotesResult" class="manual-notes-result" style="display:none;"></p>
                         </div>
                     </div>
                 </div>
@@ -598,6 +685,7 @@
                     Las boletas restantes quedan en S/ 0.00. El alumno debe generar una solicitud de Devolución de Pagos por el motivo <strong>Pago en Exceso</strong> dentro de las fechas correspondientes al periodo vigente; la devolución no se procesa automáticamente.
                     <a href="https://explora.upc.edu.pe/77774-devolucion-de-pagos/como-solicito-una-devolucion-de-pago" target="_blank" rel="noopener noreferrer">Ver cómo solicitar una devolución</a>.
                 </div>
+                <div id="manualOverpaymentNotice" class="manual-alert" style="display:none;"><strong>Atención:</strong> la primera boleta supera el costo del ciclo por <strong id="manualOverpaymentAmount">S/. 0.00</strong>. Verifica el tratamiento aplicable al caso antes de comunicar un importe final.</div>
                 <div class="timestamp-footer" id="generatedDate"></div>
             </div>
 
@@ -755,7 +843,24 @@
         const periodSummerBtn = document.getElementById("periodSummerBtn");
         const periodRegular20261Btn = document.getElementById("periodRegular20261Btn");
         const periodRegular20262Btn = document.getElementById("periodRegular20262Btn");
-        const isRegularPeriod = () => currentPeriod !== "summer";
+        const periodManualBtn = document.getElementById("periodManualBtn");
+        const controlsGrid = document.querySelector(".controls-grid");
+        const manualPanel = document.getElementById("manualPanel");
+        const manualCareer = document.getElementById("manualCareer");
+        const manualCategory = document.getElementById("manualCategory");
+        const manualCredits = document.getElementById("manualCredits");
+        const manualMatricula = document.getElementById("manualMatricula");
+        const manualCostPerCredit = document.getElementById("manualCostPerCredit");
+        const manualRegularPension = document.getElementById("manualRegularPension");
+        const manualFormula = document.getElementById("manualFormula");
+        const manualInstallmentCount = document.getElementById("manualInstallmentCount");
+        const manualDistribution = document.getElementById("manualDistribution");
+        const manualUseCycleTotalOverride = document.getElementById("manualUseCycleTotalOverride");
+        const manualCycleTotal = document.getElementById("manualCycleTotal");
+        const manualNotes = document.getElementById("manualNotes");
+        const manualAlert = document.getElementById("manualAlert");
+        let manualInitialized = false;
+        const isRegularPeriod = () => currentPeriod === "regular2026-1" || currentPeriod === "regular2026-2";
 
         function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
@@ -779,92 +884,114 @@
         filterWorkingStudentBtn.addEventListener("click", () => setCareerFilter("working_student"));
 
         function updateHeader() {
-            const modality = currentCareerFilter === "working_student" ? "Working Student" : "Pregrado";
-            const periodLabel = currentPeriod === "summer"
-                ? "Verano 2026-0"
-                : currentPeriod === "regular2026-1"
-                    ? "Periodo regular 2026-1"
-                    : "Periodo regular 2026-2";
-            document.getElementById("appTitle").textContent = currentPeriod === "summer"
-                ? "Simulador de Pensiones AC 2026-0"
-                : "Simulador de Pensiones AC";
-            document.getElementById("appSubtitle").textContent = modality + " - " + periodLabel;
+            const modality=currentCareerFilter==="working_student"?"Working Student":"Pregrado";
+            const periodLabel=currentPeriod==="summer"?"Verano 2026-0":currentPeriod==="regular2026-1"?"Periodo regular 2026-1":currentPeriod==="regular2026-2"?"Periodo regular 2026-2":"Personalizado";
+            document.getElementById("appTitle").textContent=currentPeriod==="summer"?"Simulador de Pensiones AC 2026-0":currentPeriod==="manual"?"Simulador de Pensiones AC - Personalizado":"Simulador de Pensiones AC";
+            document.getElementById("appSubtitle").textContent=currentPeriod==="manual"?"Cálculo libre del asesor":modality+" - "+periodLabel;
+        }
+
+        function setScheduleRowVisibility(count) {
+            for(let i=1;i<=12;i++){const row=document.getElementById("rowB"+i);if(row)row.style.display=i<=count?"flex":"none";}
         }
 
         function updatePeriodDisplay() {
-            const isSummer = currentPeriod === "summer";
-            periodSummerBtn.classList.toggle("active", isSummer);
-            periodSummerBtn.setAttribute("aria-pressed", String(isSummer));
-            periodRegular20261Btn.classList.toggle("active", currentPeriod === "regular2026-1");
-            periodRegular20261Btn.setAttribute("aria-pressed", String(currentPeriod === "regular2026-1"));
-            periodRegular20262Btn.classList.toggle("active", currentPeriod === "regular2026-2");
-            periodRegular20262Btn.setAttribute("aria-pressed", String(currentPeriod === "regular2026-2"));
-            document.getElementById("periodHelp").textContent = isSummer
-                ? "Verano: matrícula S/ 182.50 y tres boletas; B1 incluye 1.5 créditos."
-                : (currentPeriod === "regular2026-1" ? "Periodo regular 2026-1" : "Periodo regular 2026-2") +
-                    ": matrícula S/ 365.00 y cinco boletas; B1 incluye la pensión regular de la categoría.";
-            document.getElementById("rowB4").style.display = isSummer ? "none" : "flex";
-            document.getElementById("rowB5").style.display = isSummer ? "none" : "flex";
-            document.getElementById("dateB1").textContent = isSummer
-                ? "Vencimiento: 15/12/2025 (Incluye Matrícula)"
-                : "Incluye matrícula + pensión regular de la categoría";
-            document.getElementById("dateB2").textContent = isSummer ? "Vencimiento: 30/01/2026" : "Cuota del saldo restante";
-            document.getElementById("dateB3").textContent = isSummer ? "Vencimiento: 27/02/2026" : "Cuota del saldo restante";
-            document.getElementById("dateB4").textContent = "Cuota del saldo restante";
-            document.getElementById("dateB5").textContent = "Cuota del saldo restante";
-            document.getElementById("totalScheduleLabel").textContent = isSummer ? "TOTAL PERÍODO" : "TOTAL SEGÚN CRONOGRAMA";
-            document.getElementById("totalScheduleDescription").textContent = isSummer
-                ? "Inversión total del verano"
-                : "Importe programado en las cinco boletas";
-            document.getElementById("sumMatricula").textContent = isSummer ? "S/. 182.50" : "S/. 365.00";
-            document.getElementById("sumTotalLabel").textContent = isSummer ? "Total" : "Total del ciclo por créditos";
-            document.getElementById("calculationNote").textContent = isSummer
-                ? "Nota: B1 incluye matrícula + 1.5 créditos."
-                : "Nota: B1 incluye matrícula + pensión regular. El saldo positivo se divide entre B2 y B5.";
+            const isSummer=currentPeriod==="summer";
+            const isRegular=isRegularPeriod();
+            const isManual=currentPeriod==="manual";
+            periodSummerBtn.classList.toggle("active",isSummer);
+            periodSummerBtn.setAttribute("aria-pressed",String(isSummer));
+            periodRegular20261Btn.classList.toggle("active",currentPeriod==="regular2026-1");
+            periodRegular20261Btn.setAttribute("aria-pressed",String(currentPeriod==="regular2026-1"));
+            periodRegular20262Btn.classList.toggle("active",currentPeriod==="regular2026-2");
+            periodRegular20262Btn.setAttribute("aria-pressed",String(currentPeriod==="regular2026-2"));
+            periodManualBtn.classList.toggle("active",isManual);
+            periodManualBtn.setAttribute("aria-pressed",String(isManual));
+            controlsGrid.style.display=isManual?"none":"grid";
+            manualPanel.style.display=isManual?"block":"none";
+            document.getElementById("periodHelp").textContent=isSummer
+                ?"Verano: matrícula S/ 182.50 y tres boletas; B1 incluye 1.5 créditos."
+                :isRegular?(currentPeriod==="regular2026-1"?"Periodo regular 2026-1":"Periodo regular 2026-2")+": matrícula S/ 365.00 y cinco boletas."
+                :"Registra las tarifas, elige una plantilla y edita cualquier importe o fecha. Admite hasta 12 boletas.";
+            setScheduleRowVisibility(isManual?0:isSummer?3:5);
+            document.getElementById("dateB1").textContent=isSummer?"Vencimiento: 15/12/2025 (Incluye Matrícula)":isRegular?"Incluye matrícula + pensión regular de la categoría":"Fecha no definida";
+            document.getElementById("dateB2").textContent=isSummer?"Vencimiento: 30/01/2026":isRegular?"Cuota del saldo restante":"Fecha no definida";
+            document.getElementById("dateB3").textContent=isSummer?"Vencimiento: 27/02/2026":isRegular?"Cuota del saldo restante":"Fecha no definida";
+            for(let i=4;i<=12;i++)document.getElementById("dateB"+i).textContent=isRegular?"Cuota del saldo restante":"Fecha no definida";
+            document.getElementById("totalScheduleLabel").textContent=isSummer?"TOTAL PERÍODO":isManual?"TOTAL DE BOLETAS":"TOTAL SEGÚN CRONOGRAMA";
+            document.getElementById("totalScheduleDescription").textContent=isSummer?"Inversión total del verano":isManual?"Suma de los importes ingresados":"Importe programado en las cinco boletas";
+            document.getElementById("sumMatricula").textContent=formatCurrency(isSummer?MATRICULA:isManual?(Number(manualMatricula.value)||0):MATRICULA_REGULAR);
+            document.getElementById("sumTotalLabel").textContent=isSummer?"Total":isManual?"Total del ciclo definido":"Total del ciclo por créditos";
+            document.getElementById("calculationNote").textContent=isSummer?"Nota: B1 incluye matrícula + 1.5 créditos.":isManual?"Nota: los datos y cuotas provienen de la configuración manual del asesor.":"Nota: B1 incluye matrícula + pensión regular. El saldo positivo se divide entre B2 y B5.";
             updateHeader();
         }
 
-        function setPeriod(period) {
-            if (period === currentPeriod) return;
-            const previousText = careerInput.value;
-            const selectedCareer = allCareers.find(c => normalizeString(c.name) === normalizeString(previousText));
-            const previousCategory = categorySelect.value;
-            const previousCredits = creditsInput.value;
-
-            currentPeriod = period;
-            closeAllLists();
-            resultsSection.style.display = "none";
-            document.getElementById("overpaymentNotice").style.display = "none";
-            updatePeriodDisplay();
-
-            if (selectedCareer) {
-                careerInput.value = selectedCareer.name;
-                currentPricingKey = selectedCareer.key;
-                updateCategories(selectedCareer.key, selectedCareer.name);
-                if (previousCategory && Array.from(categorySelect.options).some(option => option.value === previousCategory)) {
-                    categorySelect.value = previousCategory;
-                }
-                careerHelper.style.display = "flex";
-                careerInput.style.borderColor = "#2ecc71";
-                creditsInput.value = previousCredits;
-                Array.from(creditBar.children).forEach(button => {
-                    button.classList.toggle("active", button.textContent.trim() === previousCredits);
+        function initializeManualInstallmentEditors() {
+            const container=document.getElementById("manualInstallmentsEditor");container.innerHTML="";
+            for(let i=1;i<=12;i++){
+                const row=document.createElement("div");row.className="manual-installment-editor-row";row.id="manualEditorRow"+i;
+                const title=document.createElement("div");title.className="manual-installment-editor-title";title.textContent="Boleta "+i+" (B"+i+")";row.appendChild(title);
+                const fields=document.createElement("div");fields.className="manual-installment-fields";
+                [
+                    {label:"Concepto",id:"manualConcept"+i,type:"text",placeholder:"Boleta "+i+" (B"+i+")"},
+                    {label:"Importe (S/)",id:"manualAmount"+i,type:"number",placeholder:"0.00",step:"0.01",min:"0"},
+                    {label:"Vencimiento (opcional)",id:"manualDate"+i,type:"date"}
+                ].forEach(field=>{
+                    const group=document.createElement("div");group.className="form-group";
+                    const label=document.createElement("label");label.htmlFor=field.id;label.textContent=field.label;
+                    const input=document.createElement("input");input.id=field.id;input.className="form-control";input.type=field.type;input.placeholder=field.placeholder||"";
+                    if(field.step)input.step=field.step;if(field.min)input.min=field.min;
+                    group.appendChild(label);group.appendChild(input);fields.appendChild(group);
                 });
-            } else {
-                careerInput.value = previousText;
-                currentPricingKey = null;
-                categorySelect.disabled = true;
-                categorySelect.innerHTML = '<option value="">-- Seleccione carrera --</option>';
-                careerHelper.style.display = "none";
-                careerInput.style.borderColor = "#e0e0e0";
-                creditsInput.value = "";
-                Array.from(creditBar.children).forEach(button => button.classList.remove("active"));
+                row.appendChild(fields);container.appendChild(row);
             }
+            updateManualEditorVisibility();
+        }
+        function updateManualEditorVisibility(){
+            const count=Math.min(12,Math.max(1,Number(manualInstallmentCount.value)||5));
+            for(let i=1;i<=12;i++){const row=document.getElementById("manualEditorRow"+i);if(row)row.style.display=i<=count?"block":"none";}
         }
 
-        periodSummerBtn.addEventListener("click", () => setPeriod("summer"));
-        periodRegular20261Btn.addEventListener("click", () => setPeriod("regular2026-1"));
-        periodRegular20262Btn.addEventListener("click", () => setPeriod("regular2026-2"));
+        function setPeriod(period) {
+            if(period===currentPeriod)return;
+            const previousPeriod=currentPeriod;
+            const previousText=careerInput.value;
+            const selectedCareer=allCareers.find(c=>normalizeString(c.name)===normalizeString(previousText));
+            const previousCategory=categorySelect.value;
+            const previousCredits=creditsInput.value;
+            currentPeriod=period;closeAllLists();resultsSection.style.display="none";
+            document.getElementById("overpaymentNotice").style.display="none";
+            document.getElementById("manualOverpaymentNotice").style.display="none";
+            manualAlert.style.display="none";updatePeriodDisplay();
+            if(period==="manual"){
+                if(!manualInitialized){
+                    manualInitialized=true;manualCareer.value=selectedCareer?selectedCareer.name:"";
+                    manualCategory.value=previousCategory||"";manualCredits.value=previousCredits||"0";
+                    manualMatricula.value=(previousPeriod==="summer"?MATRICULA:MATRICULA_REGULAR).toFixed(2);
+                    const rate=selectedCareer&&previousCategory&&pricingTables[selectedCareer.key]?pricingTables[selectedCareer.key].cats[previousCategory]:null;
+                    const pension=selectedCareer&&previousCategory&&regularPensions[selectedCareer.key]?regularPensions[selectedCareer.key].cats[previousCategory]:null;
+                    manualCostPerCredit.value=rate==null?"0.00":Number(rate).toFixed(2);
+                    manualRegularPension.value=pension==null?"0.00":Number(pension).toFixed(2);
+                }
+                return;
+            }
+            if(selectedCareer){
+                careerInput.value=selectedCareer.name;currentPricingKey=selectedCareer.key;
+                updateCategories(selectedCareer.key,selectedCareer.name);
+                if(previousCategory&&Array.from(categorySelect.options).some(option=>option.value===previousCategory))categorySelect.value=previousCategory;
+                careerHelper.style.display="flex";careerInput.style.borderColor="#2ecc71";creditsInput.value=previousCredits;
+                Array.from(creditBar.children).forEach(button=>button.classList.toggle("active",button.textContent.trim()===previousCredits));
+            }else{
+                careerInput.value=previousText;currentPricingKey=null;categorySelect.disabled=true;
+                categorySelect.innerHTML='<option value="">-- Seleccione carrera --</option>';
+                careerHelper.style.display="none";careerInput.style.borderColor="#e0e0e0";creditsInput.value="";
+                Array.from(creditBar.children).forEach(button=>button.classList.remove("active"));
+            }
+        }
+        periodSummerBtn.addEventListener("click",()=>setPeriod("summer"));
+        periodRegular20261Btn.addEventListener("click",()=>setPeriod("regular2026-1"));
+        periodRegular20262Btn.addEventListener("click",()=>setPeriod("regular2026-2"));
+        periodManualBtn.addEventListener("click",()=>setPeriod("manual"));
+        initializeManualInstallmentEditors();
         updatePeriodDisplay();
 
         function renderCareerSuggestions(query = "") {
@@ -947,7 +1074,71 @@
             if (currentPricingKey && categorySelect.value) calculate();
         };
 
+        function getManualCalculationData(showErrors=true){
+            const credits=Number(manualCredits.value),matricula=Number(manualMatricula.value),costPerCredit=Number(manualCostPerCredit.value),regularPension=Number(manualRegularPension.value);
+            const hasOverride=manualUseCycleTotalOverride.checked,overrideValue=manualCycleTotal.value.trim()===""?NaN:Number(manualCycleTotal.value);
+            if([credits,matricula,costPerCredit,regularPension].some(value=>!Number.isFinite(value)||value<0)){
+                if(showErrors){manualAlert.textContent="Revisa créditos, matrícula, costo por crédito y pensión regular. Los valores deben ser números iguales o mayores que cero.";manualAlert.style.display="block";}
+                return null;
+            }
+            if(hasOverride&&(!Number.isFinite(overrideValue)||overrideValue<0)){
+                if(showErrors){manualAlert.textContent="Marcaste el total manual del ciclo. Ingresa un importe válido que incluya la matrícula.";manualAlert.style.display="block";manualCycleTotal.focus();}
+                return null;
+            }
+            const total=hasOverride?overrideValue:credits*costPerCredit+matricula;
+            return {career:manualCareer.value.trim()||"Caso personalizado",category:manualCategory.value.trim()||"No especificada",credits,matricula,costPerCredit,regularPension,cycleTotal:Math.round(total*100)/100,count:Math.min(12,Math.max(1,Number(manualInstallmentCount.value)||5))};
+        }
+
+        function applyManualTemplate(){
+            const data=getManualCalculationData(true);if(!data)return;manualAlert.style.display="none";
+            const firstInput=document.getElementById("manualAmount1"),formula=manualFormula.value;let firstAmount;
+            if(formula==="matricula_1_5_credit"){firstAmount=data.matricula+data.costPerCredit*1.5;firstInput.value=firstAmount.toFixed(2);}
+            else if(formula==="matricula_regular"){firstAmount=data.matricula+data.regularPension;firstInput.value=firstAmount.toFixed(2);}
+            else if(formula==="matricula_only"){firstAmount=data.matricula;firstInput.value=firstAmount.toFixed(2);}
+            else{
+                if(firstInput.value.trim()===""||!Number.isFinite(Number(firstInput.value))){manualAlert.textContent="Elegiste respetar B1 tal como está. Ingresa primero el importe de la Boleta 1 en el detalle editable.";manualAlert.style.display="block";firstInput.focus();return;}
+                firstAmount=Number(firstInput.value);
+            }
+            const firstCents=Math.max(0,Math.round(firstAmount*100)),remainingCents=Math.max(0,Math.round(data.cycleTotal*100)-firstCents);
+            if(manualDistribution.value==="equal"){
+                const laterCount=Math.max(0,data.count-1),base=laterCount?Math.floor(remainingCents/laterCount):0,extra=laterCount?remainingCents%laterCount:0;
+                for(let i=2;i<=12;i++)document.getElementById("manualAmount"+i).value=(i<=data.count?(base+(i-2<extra?1:0))/100:0).toFixed(2);
+            }else if(manualDistribution.value==="zero"){for(let i=2;i<=12;i++)document.getElementById("manualAmount"+i).value="0.00";}
+            updateManualEditorVisibility();calculateManual();
+        }
+
+        function calculateManual(){
+            const data=getManualCalculationData(true);if(!data)return;
+            const amounts=[];let scheduledCents=0;
+            for(let i=1;i<=data.count;i++){
+                const input=document.getElementById("manualAmount"+i),raw=input.value.trim(),amount=raw===""?0:Number(raw);
+                if(!Number.isFinite(amount)||amount<0){manualAlert.textContent="Revisa el importe de la Boleta "+i+". Debe ser un número igual o mayor que cero.";manualAlert.style.display="block";input.focus();return;}
+                const cents=Math.round(amount*100);amounts.push(cents/100);scheduledCents+=cents;
+                const concept=document.getElementById("manualConcept"+i).value.trim()||("Boleta "+i+" (B"+i+")"),dateValue=document.getElementById("manualDate"+i).value;
+                document.getElementById("rowB"+i).style.display="flex";document.querySelector("#rowB"+i+" .inst-label").textContent=concept;
+                document.getElementById("resB"+i).textContent=formatCurrency(cents/100);
+                document.getElementById("dateB"+i).textContent=dateValue?"Vencimiento: "+new Date(dateValue+"T00:00:00").toLocaleDateString("es-PE"):"Fecha no definida";
+            }
+            setScheduleRowVisibility(data.count);
+            for(let i=data.count+1;i<=12;i++){document.getElementById("resB"+i).textContent="S/. 0.00";document.querySelector("#rowB"+i+" .inst-label").textContent="Boleta "+i+" (B"+i+")";}
+            document.getElementById("resTotalTop").textContent=formatCurrency(scheduledCents/100);
+            document.getElementById("sumCareerName").textContent=data.career;document.getElementById("sumCategory").textContent=data.category;
+            document.getElementById("sumCantCred").textContent=data.credits;document.getElementById("sumCostoCred").textContent=formatCurrency(data.costPerCredit);
+            document.getElementById("sumMatricula").textContent=formatCurrency(data.matricula);document.getElementById("sumTotalBottom").textContent=formatCurrency(data.cycleTotal);
+            document.getElementById("totalScheduleLabel").textContent="TOTAL DE BOLETAS";document.getElementById("totalScheduleDescription").textContent="Suma de los importes ingresados";
+            document.getElementById("sumTotalLabel").textContent="Total del ciclo definido";
+            document.getElementById("calculationNote").textContent=manualUseCycleTotalOverride.checked?"El total del ciclo fue definido manualmente por el asesor.":"Total calculado como matrícula + (créditos × costo por crédito).";
+            const noteResult=document.getElementById("manualNotesResult");
+            noteResult.textContent=manualNotes.value.trim()?"Observaciones del asesor: "+manualNotes.value.trim():"";noteResult.style.display=manualNotes.value.trim()?"block":"none";
+            const excess=Math.max(0,Math.round(((amounts[0]||0)-data.cycleTotal)*100)/100),warning=document.getElementById("manualOverpaymentNotice");
+            if(excess>0){document.getElementById("manualOverpaymentAmount").textContent=formatCurrency(excess);warning.style.display="block";}else warning.style.display="none";
+            document.getElementById("overpaymentNotice").style.display="none";manualAlert.style.display="none";
+            const now=new Date();document.getElementById("generatedDate").textContent="Generado: "+now.toLocaleDateString()+" "+now.toLocaleTimeString();
+            resultsSection.style.display="block";resultsSection.scrollIntoView({behavior:"smooth",block:"nearest"});
+        }
+
         function calculate() {
+            if(currentPeriod==="manual"){calculateManual();return;}
             const category = categorySelect.value;
             const credits = parseFloat(creditsInput.value);
             if (!currentPricingKey || !category || isNaN(credits)) return;
@@ -1004,6 +1195,7 @@
             document.getElementById('resTotalTop').textContent = formatCurrency(scheduledTotal);
             document.getElementById('sumCareerName').textContent = careerInput.value;
             document.getElementById('sumCantCred').textContent = credits;
+            document.getElementById('sumCategory').textContent = category;
             document.getElementById('sumCostoCred').textContent = formatCurrency(costPerCredit);
             document.getElementById('sumMatricula').textContent = formatCurrency(matricula);
             document.getElementById('sumTotalBottom').textContent = formatCurrency(cycleTotal);
@@ -1053,8 +1245,40 @@
         }
         function removeActive(x) { for (let i = 0; i < x.length; i++) x[i].classList.remove("autocomplete-active"); }
 
-        document.getElementById('resetBtn').addEventListener('click', () => { careerInput.value = ""; resetUIState(); careerInput.focus(); });
-        document.getElementById('calcularBtn').addEventListener('click', calculate);
+        document.getElementById("manualApplyTemplateBtn").addEventListener("click",applyManualTemplate);
+        document.getElementById("manualClearAmountsBtn").addEventListener("click",()=>{
+            for(let i=1;i<=12;i++)document.getElementById("manualAmount"+i).value="";
+            manualAlert.style.display="none";
+            if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
+        });
+        manualInstallmentCount.addEventListener("change",()=>{
+            updateManualEditorVisibility();
+            if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
+        });
+        manualUseCycleTotalOverride.addEventListener("change",()=>{
+            manualCycleTotal.disabled=!manualUseCycleTotalOverride.checked;
+            if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
+        });
+        manualPanel.addEventListener("change",event=>{
+            if(event.target.id==="manualFormula"||event.target.id==="manualDistribution")return;
+            if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
+        });
+        function resetManualForm(){
+            manualCareer.value="";manualCategory.value="";manualCredits.value="0";manualMatricula.value=MATRICULA_REGULAR.toFixed(2);
+            manualCostPerCredit.value="0.00";manualRegularPension.value="0.00";manualFormula.value="matricula_regular";
+            manualInstallmentCount.value="5";manualDistribution.value="equal";manualUseCycleTotalOverride.checked=false;
+            manualCycleTotal.value="";manualCycleTotal.disabled=true;manualNotes.value="";manualAlert.style.display="none";
+            for(let i=1;i<=12;i++){
+                document.getElementById("manualConcept"+i).value="";document.getElementById("manualAmount"+i).value="";
+                document.getElementById("manualDate"+i).value="";document.getElementById("manualEditorRow"+i).style.display=i<=5?"block":"none";
+            }
+        }
+        document.getElementById("resetBtn").addEventListener("click",()=>{
+            careerInput.value="";resetUIState();document.getElementById("manualOverpaymentNotice").style.display="none";
+            document.getElementById("manualNotesResult").style.display="none";
+            if(currentPeriod==="manual")resetManualForm();else careerInput.focus();
+        });
+        document.getElementById("calcularBtn").addEventListener("click",calculate);
 
         document.getElementById('copyTextBtn').addEventListener('click', async () => {
             const btn = document.getElementById('copyTextBtn'); 
@@ -1062,6 +1286,37 @@
             const originalText = "COPIAR TEXTO";
             const svgIcon = btn.querySelector('svg');
             
+            if(currentPeriod==="manual"){
+                const data=getManualCalculationData(false),count=Math.min(12,Math.max(1,Number(manualInstallmentCount.value)||5)),bills=[];
+                let scheduledCents=0;
+                for(let i=1;i<=count;i++){
+                    const concept=document.getElementById("manualConcept"+i).value.trim()||("Boleta "+i+" (B"+i+")");
+                    const raw=document.getElementById("manualAmount"+i).value.trim(),amount=raw===""?0:Math.max(0,Number(raw)||0);
+                    const dateValue=document.getElementById("manualDate"+i).value;scheduledCents+=Math.round(amount*100);
+                    bills.push("• "+concept+": "+formatCurrency(amount)+(dateValue?" (Vencimiento: "+new Date(dateValue+"T00:00:00").toLocaleDateString("es-PE")+")":""));
+                }
+                const totalCycle=data?data.cycleTotal:(Number(manualCredits.value)||0)*(Number(manualCostPerCredit.value)||0)+(Number(manualMatricula.value)||0);
+                const customText=[
+                    "*SIMULADOR PENSIONES AC — PERSONALIZADO*",
+                    "Carrera / concepto: "+(manualCareer.value.trim()||"Caso personalizado"),
+                    "Categoría: "+(manualCategory.value.trim()||"No especificada"),
+                    "Créditos: "+(manualCredits.value||"0"),
+                    "Costo de matrícula: "+formatCurrency(Number(manualMatricula.value)||0),
+                    "Costo por crédito: "+formatCurrency(Number(manualCostPerCredit.value)||0),
+                    "Total del ciclo: "+formatCurrency(totalCycle),"-----------------------------------","*CRONOGRAMA:*",bills.join("\n"),
+                    "-----------------------------------","*TOTAL DE BOLETAS: "+formatCurrency(scheduledCents/100)+"*",
+                    manualNotes.value.trim()?"Observaciones: "+manualNotes.value.trim():"",
+                    document.getElementById("manualOverpaymentNotice").style.display!=="none"?"Atención: B1 supera el costo del ciclo en "+document.getElementById("manualOverpaymentAmount").textContent+". Verificar tratamiento aplicable.":"",
+                    "Generado por herramienta interna."
+                ].filter(Boolean).join("\n");
+                try{
+                    await navigator.clipboard.writeText(customText);btn.classList.add("success");btnText.textContent="¡COPIADO!";
+                    const originalIcon=svgIcon.innerHTML;svgIcon.innerHTML='<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>';
+                    setTimeout(()=>{btn.classList.remove("success");btnText.textContent=originalText;svgIcon.innerHTML=originalIcon;},2000);
+                }catch(err){console.error("Error al copiar",err);btnText.textContent="ERROR AL COPIAR";}
+                return;
+            }
+
             const isRegular = isRegularPeriod();
             const copiedBills = isRegular
                 ? [
