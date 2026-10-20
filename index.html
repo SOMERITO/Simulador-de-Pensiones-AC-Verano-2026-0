@@ -739,7 +739,8 @@
         // Al enfocar el campo, mostrar todas las carreras del filtro activo.
         // La lista conserva el orden alfabético definido en allCareers.
         careerInput.addEventListener("focus", function() {
-            renderCareerSuggestions("");
+            // Al volver al campo, conservar el texto escrito y mantener el filtro aplicado.
+            renderCareerSuggestions(this.value);
         });
 
         // Al escribir, reducir las opciones sin mezclar modalidades.
