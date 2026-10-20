@@ -517,24 +517,36 @@
         filterPregradoBtn.addEventListener("click", () => setCareerFilter("pregrado"));
         filterWorkingStudentBtn.addEventListener("click", () => setCareerFilter("working_student"));
 
-        careerInput.addEventListener('input', function() {
-            closeAllLists(); resetUIState();
-            const val = this.value; if (!val) return;
-            currentFocus = -1; const cleanVal = normalizeString(val);
+        function renderCareerSuggestions(query = "") {
+            closeAllLists();
+            currentFocus = -1;
+            const cleanQuery = normalizeString(query);
             const matches = allCareers.filter(c => {
                 const belongsToFilter = currentCareerFilter === "working_student"
                     ? c.key === "working_student"
                     : c.key !== "working_student";
-                return belongsToFilter && normalizeString(c.name).includes(cleanVal);
+                return belongsToFilter && (!cleanQuery || normalizeString(c.name).includes(cleanQuery));
             });
-            
+
             matches.forEach(match => {
-                let item = document.createElement("div");
+                const item = document.createElement("div");
                 item.textContent = match.name;
-                item.onmousedown = function(e) { e.preventDefault(); }; 
+                item.onmousedown = function(e) { e.preventDefault(); };
                 item.onclick = function() { selectCareer(match); };
                 autocompleteList.appendChild(item);
             });
+        }
+
+        // Al enfocar el campo, mostrar todas las carreras del filtro activo.
+        // La lista conserva el orden alfabético definido en allCareers.
+        careerInput.addEventListener("focus", function() {
+            renderCareerSuggestions("");
+        });
+
+        // Al escribir, reducir las opciones sin mezclar modalidades.
+        careerInput.addEventListener("input", function() {
+            resetUIState();
+            renderCareerSuggestions(this.value);
         });
 
         function selectCareer(careerObj) {
