@@ -1132,6 +1132,7 @@
         }
 
         function calculateManual(){
+            const resultWasVisible=resultsSection.style.display==="block";
             const data=getManualCalculationData(true);if(!data)return;
             const amounts=[];let scheduledCents=0;
             for(let i=1;i<=data.count;i++){
@@ -1158,7 +1159,8 @@
             if(excess>0){document.getElementById("manualOverpaymentAmount").textContent=formatCurrency(excess);warning.style.display="block";}else warning.style.display="none";
             document.getElementById("overpaymentNotice").style.display="none";manualAlert.style.display="none";
             const now=new Date();document.getElementById("generatedDate").textContent="Generado: "+now.toLocaleDateString()+" "+now.toLocaleTimeString();
-            resultsSection.style.display="block";resultsSection.scrollIntoView({behavior:"smooth",block:"nearest"});
+            resultsSection.style.display="block";
+            if(!resultWasVisible)resultsSection.scrollIntoView({behavior:"smooth",block:"nearest"});
         }
 
         function calculate() {
@@ -1284,7 +1286,7 @@
             if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
         });
         manualPanel.addEventListener("change",event=>{
-            if(event.target.id==="manualFormula"||event.target.id==="manualDistribution")return;
+            if(["manualFormula","manualDistribution","manualInstallmentCount","manualUseCycleTotalOverride"].includes(event.target.id))return;
             if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
         });
         function resetManualForm(){
