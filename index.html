@@ -221,6 +221,204 @@
         }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== ANIMACIONES SUTILES Y MICROINTERACCIONES ===== */
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-fast: 180ms;
+            --motion-normal: 280ms;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 8% 4%, rgba(211, 16, 16, 0.055), transparent 28rem),
+                radial-gradient(circle at 96% 92%, rgba(0, 102, 199, 0.045), transparent 30rem),
+                var(--bg-body);
+            background-attachment: fixed;
+        }
+
+        .main-wrapper {
+            animation: appReveal 760ms var(--motion-ease) both;
+            transform-origin: top center;
+        }
+
+        .header {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            top: -20%;
+            bottom: -20%;
+            left: -42%;
+            width: 34%;
+            pointer-events: none;
+            background: linear-gradient(105deg, transparent, rgba(255,255,255,0.16), transparent);
+            transform: translateX(-150%) skewX(-18deg);
+            animation: headerShine 1.15s 420ms var(--motion-ease) both;
+        }
+
+        .header h1, .header p {
+            position: relative;
+            z-index: 1;
+            animation: riseIn 620ms var(--motion-ease) both;
+        }
+        .header h1 { animation-delay: 90ms; }
+        .header p { animation-delay: 180ms; }
+
+        .disclaimer-box {
+            animation: riseIn 560ms 170ms var(--motion-ease) both;
+        }
+
+        .controls-grid .form-group {
+            animation: riseIn 560ms var(--motion-ease) both;
+        }
+        .controls-grid .form-group:nth-child(1) { animation-delay: 230ms; }
+        .controls-grid .form-group:nth-child(2) { animation-delay: 300ms; }
+        .controls-grid .form-group:nth-child(3) { animation-delay: 370ms; }
+
+        .career-filter-btn {
+            transition:
+                background-color var(--motion-fast) ease,
+                color var(--motion-fast) ease,
+                border-color var(--motion-fast) ease,
+                box-shadow var(--motion-fast) ease,
+                transform var(--motion-fast) var(--motion-ease);
+        }
+        .career-filter-btn.active {
+            box-shadow: 0 3px 10px rgba(211, 16, 16, 0.16);
+        }
+        .career-filter-btn:hover { transform: translateY(-1px); }
+        .career-filter-btn:active { transform: scale(0.985); }
+
+        .form-control {
+            transition:
+                border-color var(--motion-normal) ease,
+                background-color var(--motion-normal) ease,
+                box-shadow var(--motion-normal) ease;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(211, 16, 16, 0.09);
+        }
+
+        .credit-btn {
+            transition:
+                color var(--motion-fast) ease,
+                border-color var(--motion-fast) ease,
+                background-color var(--motion-fast) ease,
+                box-shadow var(--motion-fast) ease,
+                transform var(--motion-fast) var(--motion-ease);
+        }
+        .credit-btn:hover { transform: translateY(-2px); }
+        .credit-btn:active { transform: scale(0.96); }
+        .credit-btn.active { animation: creditSelect 280ms var(--motion-ease) both; }
+
+        .buttons-row {
+            animation: riseIn 560ms 410ms var(--motion-ease) both;
+        }
+        .btn-base {
+            transition:
+                background-color 220ms ease,
+                color 220ms ease,
+                border-color 220ms ease,
+                box-shadow 220ms ease,
+                transform 220ms var(--motion-ease);
+        }
+        .btn-calc:hover, .btn-reset:hover {
+            box-shadow: 0 7px 18px rgba(0,0,0,0.12);
+        }
+        .btn-base:active { transform: translateY(0) scale(0.99); }
+        .Btn-Corp {
+            transition: background-color 280ms ease, box-shadow 280ms ease, transform 280ms var(--motion-ease);
+        }
+
+        .autocomplete-items {
+            transform-origin: top center;
+            animation: dropdownReveal 190ms var(--motion-ease) both;
+            will-change: transform, opacity;
+        }
+        .autocomplete-items div {
+            transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, padding-left var(--motion-fast) var(--motion-ease);
+            animation: suggestionReveal 230ms var(--motion-ease) both;
+            animation-delay: calc(var(--suggestion-index, 0) * 14ms);
+        }
+        .autocomplete-items div:hover { padding-left: 19px; }
+
+        #resultsSection {
+            animation: resultsReveal 520ms var(--motion-ease) both;
+        }
+        .results-container > div {
+            animation: riseIn 450ms var(--motion-ease) both;
+        }
+        .results-container > div:first-child { animation-delay: 60ms; }
+        .results-container > div:last-child { animation-delay: 120ms; }
+        .inst-row {
+            transition: transform 220ms var(--motion-ease), box-shadow 220ms ease, border-color 220ms ease;
+            animation: cardRise 420ms var(--motion-ease) both;
+        }
+        .inst-row:nth-child(1) { animation-delay: 90ms; }
+        .inst-row:nth-child(2) { animation-delay: 140ms; }
+        .inst-row:nth-child(3) { animation-delay: 190ms; }
+        .inst-row:nth-child(4) { animation-delay: 240ms; }
+        .inst-row:not(.total):hover {
+            transform: translateY(-2px);
+            border-color: #d5d5d5;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.045);
+        }
+        .summary-list { animation: cardRise 480ms 150ms var(--motion-ease) both; }
+        .total-highlight { animation: totalReveal 500ms 220ms var(--motion-ease) both; }
+
+        @keyframes appReveal {
+            from { opacity: 0; transform: translateY(12px) scale(0.992); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(9px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes headerShine {
+            from { transform: translateX(-150%) skewX(-18deg); }
+            to { transform: translateX(520%) skewX(-18deg); }
+        }
+        @keyframes dropdownReveal {
+            from { opacity: 0; transform: translateY(-5px) scaleY(0.985); }
+            to { opacity: 1; transform: translateY(0) scaleY(1); }
+        }
+        @keyframes suggestionReveal {
+            from { opacity: 0; transform: translateX(-5px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes creditSelect {
+            0% { transform: scale(0.96); }
+            70% { transform: scale(1.035); }
+            100% { transform: scale(1); }
+        }
+        @keyframes resultsReveal {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cardRise {
+            from { opacity: 0; transform: translateY(7px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes totalReveal {
+            from { opacity: 0; transform: translateY(5px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -528,8 +726,9 @@
                 return belongsToFilter && (!cleanQuery || normalizeString(c.name).includes(cleanQuery));
             });
 
-            matches.forEach(match => {
+            matches.forEach((match, index) => {
                 const item = document.createElement("div");
+                item.style.setProperty("--suggestion-index", Math.min(index, 10));
                 item.textContent = match.name;
                 item.onmousedown = function(e) { e.preventDefault(); };
                 item.onclick = function() { selectCareer(match); };
