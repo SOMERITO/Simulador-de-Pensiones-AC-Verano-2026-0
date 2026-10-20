@@ -450,7 +450,8 @@
             <label>Periodo académico</label>
             <div class="career-filter-buttons" role="group" aria-label="Seleccionar periodo académico">
                 <button type="button" id="periodSummerBtn" class="career-filter-btn active" aria-pressed="true">Verano 2026-0</button>
-                <button type="button" id="periodRegularBtn" class="career-filter-btn" aria-pressed="false">Periodo regular</button>
+                <button type="button" id="periodRegular20261Btn" class="career-filter-btn" aria-pressed="false">Periodo regular 2026-1</button>
+                <button type="button" id="periodRegular20262Btn" class="career-filter-btn" aria-pressed="false">Periodo regular 2026-2</button>
             </div>
             <small id="periodHelp" style="font-size:0.75rem; color:#5f6368; line-height:1.5;">Verano: matrícula S/ 182.50 y tres boletas.</small>
         </div>
@@ -752,7 +753,9 @@
         const filterPregradoBtn = document.getElementById("filterPregradoBtn");
         const filterWorkingStudentBtn = document.getElementById("filterWorkingStudentBtn");
         const periodSummerBtn = document.getElementById("periodSummerBtn");
-        const periodRegularBtn = document.getElementById("periodRegularBtn");
+        const periodRegular20261Btn = document.getElementById("periodRegular20261Btn");
+        const periodRegular20262Btn = document.getElementById("periodRegular20262Btn");
+        const isRegularPeriod = () => currentPeriod !== "summer";
 
         function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
@@ -777,23 +780,29 @@
 
         function updateHeader() {
             const modality = currentCareerFilter === "working_student" ? "Working Student" : "Pregrado";
+            const periodLabel = currentPeriod === "summer"
+                ? "Verano 2026-0"
+                : currentPeriod === "regular2026-1"
+                    ? "Periodo regular 2026-1"
+                    : "Periodo regular 2026-2";
             document.getElementById("appTitle").textContent = currentPeriod === "summer"
                 ? "Simulador de Pensiones AC 2026-0"
                 : "Simulador de Pensiones AC";
-            document.getElementById("appSubtitle").textContent = currentPeriod === "summer"
-                ? modality + " - Verano 2026-0"
-                : modality + " - Periodo regular (marzo/agosto)";
+            document.getElementById("appSubtitle").textContent = modality + " - " + periodLabel;
         }
 
         function updatePeriodDisplay() {
             const isSummer = currentPeriod === "summer";
             periodSummerBtn.classList.toggle("active", isSummer);
             periodSummerBtn.setAttribute("aria-pressed", String(isSummer));
-            periodRegularBtn.classList.toggle("active", !isSummer);
-            periodRegularBtn.setAttribute("aria-pressed", String(!isSummer));
+            periodRegular20261Btn.classList.toggle("active", currentPeriod === "regular2026-1");
+            periodRegular20261Btn.setAttribute("aria-pressed", String(currentPeriod === "regular2026-1"));
+            periodRegular20262Btn.classList.toggle("active", currentPeriod === "regular2026-2");
+            periodRegular20262Btn.setAttribute("aria-pressed", String(currentPeriod === "regular2026-2"));
             document.getElementById("periodHelp").textContent = isSummer
                 ? "Verano: matrícula S/ 182.50 y tres boletas; B1 incluye 1.5 créditos."
-                : "Periodo regular: matrícula S/ 365.00 y cinco boletas; B1 incluye la pensión regular de la categoría.";
+                : (currentPeriod === "regular2026-1" ? "Periodo regular 2026-1" : "Periodo regular 2026-2") +
+                    ": matrícula S/ 365.00 y cinco boletas; B1 incluye la pensión regular de la categoría.";
             document.getElementById("rowB4").style.display = isSummer ? "none" : "flex";
             document.getElementById("rowB5").style.display = isSummer ? "none" : "flex";
             document.getElementById("dateB1").textContent = isSummer
@@ -854,7 +863,8 @@
         }
 
         periodSummerBtn.addEventListener("click", () => setPeriod("summer"));
-        periodRegularBtn.addEventListener("click", () => setPeriod("regular"));
+        periodRegular20261Btn.addEventListener("click", () => setPeriod("regular2026-1"));
+        periodRegular20262Btn.addEventListener("click", () => setPeriod("regular2026-2"));
         updatePeriodDisplay();
 
         function renderCareerSuggestions(query = "") {
@@ -910,7 +920,7 @@
             if (pricingTables[key]) {
                 for (let cat in pricingTables[key].cats) {
                     if (isDerechoWS && (cat === 'Z' || cat === '5Z')) continue;
-                    if (currentPeriod === "regular" &&
+                    if (isRegularPeriod() &&
                         (!regularPensions[key] || !Object.prototype.hasOwnProperty.call(regularPensions[key].cats, cat))) continue;
                     let option = document.createElement('option'); 
                     option.value = cat; 
@@ -945,7 +955,7 @@
             const table = pricingTables[currentPricingKey];
             const costPerCredit = table.cats[category];
             const totalTuition = costPerCredit * credits;
-            const matricula = currentPeriod === "regular" ? MATRICULA_REGULAR : MATRICULA;
+            const matricula = isRegularPeriod() ? MATRICULA_REGULAR : MATRICULA;
             let billAmounts = [];
             let cycleTotal = 0;
             let scheduledTotal = 0;
@@ -999,7 +1009,7 @@
             document.getElementById('sumTotalBottom').textContent = formatCurrency(cycleTotal);
 
             const overpaymentNotice = document.getElementById("overpaymentNotice");
-            if (currentPeriod === "regular" && overpayment > 0) {
+            if (isRegularPeriod() && overpayment > 0) {
                 document.getElementById("overpaymentAmount").textContent = formatCurrency(overpayment);
                 overpaymentNotice.style.display = "block";
             } else {
@@ -1052,7 +1062,7 @@
             const originalText = "COPIAR TEXTO";
             const svgIcon = btn.querySelector('svg');
             
-            const isRegular = currentPeriod === "regular";
+            const isRegular = isRegularPeriod();
             const copiedBills = isRegular
                 ? [
                     "• Boleta 1: " + document.getElementById("resB1").textContent + " (matrícula + pensión regular)",
@@ -1075,7 +1085,9 @@
                 : "";
             const textToCopy = [
                 "*SIMULADOR PENSIONES AC*",
-                "Periodo: " + (isRegular ? "Regular (marzo/agosto)" : "Verano 2026-0"),
+                "Periodo: " + (isRegular
+                    ? (currentPeriod === "regular2026-1" ? "Regular 2026-1" : "Regular 2026-2")
+                    : "Verano 2026-0"),
                 "-----------------------------------",
                 "🎓 Carrera: " + careerInput.value,
                 "📚 Créditos: " + creditsInput.value,
