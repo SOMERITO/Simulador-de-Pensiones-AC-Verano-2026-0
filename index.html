@@ -154,6 +154,13 @@
         .total-highlight { margin-top: 15px; padding: 12px; border-radius: 6px; background-color: #fff0f0; border: 1px solid #ffcccc; display: flex; justify-content: space-between; align-items: center; }
         .total-highlight .summary-val { color: var(--upc-red); font-size: 1.3rem; }
 
+        .overpayment-notice {
+            margin-top: 16px; padding: 14px 16px; border-radius: 8px;
+            background: #fff8e1; border: 1px solid #f2cf72;
+            color: #795548; font-size: 0.8rem; line-height: 1.6;
+        }
+        .overpayment-notice a { color: var(--upc-red-dark); font-weight: 700; }
+
         .warning-footer { margin-top: 25px; padding: 12px; background-color: #fff8e1; border-radius: 6px; font-size: 0.75rem; color: #795548; border: 1px solid #ffecb3; display: flex; align-items: center; gap: 10px; }
         .warning-footer svg { fill: #f57f17; }
         .timestamp-footer { text-align: right; font-size: 0.65rem; color: #aaa; margin-top: 8px; }
@@ -426,8 +433,8 @@
 <div class="main-wrapper" id="mainApp">
     
     <header class="header">
-        <h1>Simulador de Pensiones AC 2026-0</h1>
-        <p>Pregrado - Verano</p>
+        <h1 id="appTitle">Simulador de Pensiones AC 2026-0</h1>
+        <p id="appSubtitle">Pregrado - Verano 2026-0</p>
     </header>
 
     <div class="content-body">
@@ -437,6 +444,15 @@
             <div>
                 <strong>Uso Interno:</strong> Herramienta exclusiva solo para colaboradores UPC. Prohibida su distribución externa.
             </div>
+        </div>
+
+        <div class="form-group period-selector" style="margin-bottom:24px; max-width:560px;">
+            <label>Periodo académico</label>
+            <div class="career-filter-buttons" role="group" aria-label="Seleccionar periodo académico">
+                <button type="button" id="periodSummerBtn" class="career-filter-btn active" aria-pressed="true">Verano 2026-0</button>
+                <button type="button" id="periodRegularBtn" class="career-filter-btn" aria-pressed="false">Periodo regular</button>
+            </div>
+            <small id="periodHelp" style="font-size:0.75rem; color:#5f6368; line-height:1.5;">Verano: matrícula S/ 182.50 y tres boletas.</small>
         </div>
 
         <div class="controls-grid">
@@ -498,28 +514,42 @@
                             <div class="inst-row">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 1 (B1)</span>
-                                    <span class="inst-date">Vencimiento: 15/12/2025 (Incluye Matrícula)</span>
+                                    <span class="inst-date" id="dateB1">Vencimiento: 15/12/2025 (Incluye Matrícula)</span>
                                 </div>
                                 <span class="inst-amount" id="resB1">S/. 0.00</span>
                             </div>
                             <div class="inst-row">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 2 (B2)</span>
-                                    <span class="inst-date">Vencimiento: 30/01/2026</span>
+                                    <span class="inst-date" id="dateB2">Vencimiento: 30/01/2026</span>
                                 </div>
                                 <span class="inst-amount" id="resB2">S/. 0.00</span>
                             </div>
                             <div class="inst-row">
                                 <div class="inst-info">
                                     <span class="inst-label">Boleta 3 (B3)</span>
-                                    <span class="inst-date">Vencimiento: 27/02/2026</span>
+                                    <span class="inst-date" id="dateB3">Vencimiento: 27/02/2026</span>
                                 </div>
                                 <span class="inst-amount" id="resB3">S/. 0.00</span>
                             </div>
+                            <div class="inst-row" id="rowB4" style="display:none;">
+                                <div class="inst-info">
+                                    <span class="inst-label">Boleta 4 (B4)</span>
+                                    <span class="inst-date" id="dateB4">Cuota del saldo restante</span>
+                                </div>
+                                <span class="inst-amount" id="resB4">S/. 0.00</span>
+                            </div>
+                            <div class="inst-row" id="rowB5" style="display:none;">
+                                <div class="inst-info">
+                                    <span class="inst-label">Boleta 5 (B5)</span>
+                                    <span class="inst-date" id="dateB5">Cuota del saldo restante</span>
+                                </div>
+                                <span class="inst-amount" id="resB5">S/. 0.00</span>
+                            </div>
                             <div class="inst-row total">
                                 <div class="inst-info">
-                                    <span class="inst-label">TOTAL PERÍODO</span>
-                                    <span class="inst-date">Inversión total del verano</span>
+                                    <span class="inst-label" id="totalScheduleLabel">TOTAL PERÍODO</span>
+                                    <span class="inst-date" id="totalScheduleDescription">Inversión total del verano</span>
                                 </div>
                                 <span class="inst-amount" id="resTotalTop">S/. 0.00</span>
                             </div>
@@ -543,13 +573,13 @@
                             </div>
                             <div class="summary-item">
                                 <span class="summary-label">Matrícula</span>
-                                <span class="summary-val">S/. 182.50</span>
+                                <span class="summary-val" id="sumMatricula">S/. 182.50</span>
                             </div>
                             <div class="total-highlight">
-                                <span class="summary-label">Total</span>
+                                <span class="summary-label" id="sumTotalLabel">Total</span>
                                 <span class="summary-val" id="sumTotalBottom">S/. 0.00</span>
                             </div>
-                            <p style="font-size: 0.7rem; color: #999; margin-top: 15px; text-align: center;">
+                            <p id="calculationNote" style="font-size: 0.7rem; color: #999; margin-top: 15px; text-align: center;">
                                 Nota: B1 incluye Matrícula + 1.5 créditos.
                             </p>
                         </div>
@@ -561,6 +591,11 @@
                     <div>
                         <strong>IMPORTANTE:</strong> La información mostrada es referencial. Los pagos realizados fuera de fecha generarán intereses moratorios y gastos administrativos. Para información oficial, consulte el portal <a href="https://explora.upc.edu.pe" target="_blank" class="warning-link">explora.upc.edu.pe</a>.
                     </div>
+                </div>
+                <div id="overpaymentNotice" class="overpayment-notice" style="display:none;">
+                    <strong>Pago en exceso identificado: <span id="overpaymentAmount">S/. 0.00</span>.</strong>
+                    Las boletas restantes quedan en S/ 0.00. El alumno debe generar una solicitud de Devolución de Pagos por el motivo <strong>Pago en Exceso</strong> dentro de las fechas correspondientes al periodo vigente; la devolución no se procesa automáticamente.
+                    <a href="https://explora.upc.edu.pe/77774-devolucion-de-pagos/como-solicito-una-devolucion-de-pago" target="_blank" rel="noopener noreferrer">Ver cómo solicitar una devolución</a>.
                 </div>
                 <div class="timestamp-footer" id="generatedDate"></div>
             </div>
@@ -604,6 +639,26 @@
             'enfermeria': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'N': 530, 'X': 833, 'Y': 626, 'Z': 465, 'F': 269, 'H': 269 }, name: "Enfermería" },
             'working_student': { cats: { 'Q': 1112, 'R': 927, 'S': 787, 'T': 686, 'U': 433, 'Z': 360, '5Q': 1091, '5R': 909, '5S': 772, '5T': 673, '5U': 424, '5Z': 353 }, name: "Working Student" },
             'carreras_generales': { cats: { 'Q': 1236, 'R': 1030, 'S': 876, 'T': 755, 'U': 596, 'H': 526 }, name: "Carreras Generales" }
+        };
+
+        // Pensiones regulares oficiales UPC 2026 por carrera/categoría.
+        // Las categorías disponibles se limitan a la intersección con la tabla de costo por crédito.
+        const regularPensions = {
+            'medicina': { cats: { 'A': 6594, 'B': 5888, 'C': 4949, 'D': 4590, 'H': 4590 } },
+            'musica': { cats: { 'Q': 4704, 'R': 3917, 'S': 3328, 'T': 2872, 'H': 2337 } },
+            'grupo_especial_xyz': { cats: { 'Q': 4704, 'R': 3917, 'S': 3328, 'T': 2872, 'U': 2277, 'X': 3166, 'Y': 2382, 'Z': 1769, 'H': 1553 } },
+            'grupo_salud_ing_2': { cats: { 'Q': 4704, 'R': 3917, 'S': 3328, 'T': 2872, 'U': 2277, 'Z': 1785, 'H': 1999 } },
+            'biomedica_odont_minera': { cats: { 'Q': 5419, 'R': 4499, 'S': 3830, 'T': 3301, 'U': 2619, 'H': 2299 } },
+            'moda': { cats: { 'Q': 5419, 'R': 4499, 'S': 3830, 'T': 3301, 'H': 2688 } },
+            'arquitectura': { cats: { 'Q': 4743, 'R': 3954, 'S': 3361, 'T': 2896, 'U': 2296, 'H': 2015 } },
+            'veterinaria': { cats: { 'Q': 5199, 'R': 4328, 'S': 3677, 'T': 3170, 'U': 2515, 'H': 2208 } },
+            'biologia': { cats: { 'Q': 5199, 'R': 4328, 'S': 3677, 'T': 3170, 'H': 2582 } },
+            'terapia_fisica': { cats: { 'Q': 4704, 'R': 3917, 'S': 3328, 'T': 2872, 'U': 2277, 'X': 3166, 'Y': 2382, 'Z': 1769, '5Z': 1019, 'H': 1019 } },
+            'ing_civil': { cats: { 'Q': 4743, 'R': 3954, 'S': 3361, 'T': 2896, 'U': 2296, 'X': 3197, 'Y': 2403, 'Z': 1785, 'H': 1570 } },
+            'derecho': { cats: { 'Q': 4743, 'R': 3954, 'S': 3361, 'T': 2896, 'U': 2296, 'Z': 1785, 'H': 2015 } },
+            'enfermeria': { cats: { 'Q': 4704, 'R': 3917, 'S': 3328, 'T': 2872, 'U': 2277, 'N': 2019, 'X': 3166, 'Y': 2382, 'Z': 1785, 'F': 1019, 'H': 1019 } },
+            'working_student': { cats: { 'Q': 4282, 'R': 3569, 'S': 3030, 'T': 2638, 'U': 1670, 'Z': 1387 } },
+            'carreras_generales': { cats: { 'Q': 4704, 'R': 3917, 'S': 3328, 'T': 2872, 'U': 2277, 'H': 1999 } }
         };
 
         const allCareers = [
@@ -691,9 +746,12 @@
         let currentPricingKey = null;
         let currentFocus = -1;
         let currentCareerFilter = "pregrado";
+        let currentPeriod = "summer";
 
         const filterPregradoBtn = document.getElementById("filterPregradoBtn");
         const filterWorkingStudentBtn = document.getElementById("filterWorkingStudentBtn");
+        const periodSummerBtn = document.getElementById("periodSummerBtn");
+        const periodRegularBtn = document.getElementById("periodRegularBtn");
 
         function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
@@ -710,10 +768,93 @@
             careerInput.value = "";
             closeAllLists();
             resetUIState();
+            updateHeader();
         }
 
         filterPregradoBtn.addEventListener("click", () => setCareerFilter("pregrado"));
         filterWorkingStudentBtn.addEventListener("click", () => setCareerFilter("working_student"));
+
+        function updateHeader() {
+            const modality = currentCareerFilter === "working_student" ? "Working Student" : "Pregrado";
+            document.getElementById("appTitle").textContent = currentPeriod === "summer"
+                ? "Simulador de Pensiones AC 2026-0"
+                : "Simulador de Pensiones AC";
+            document.getElementById("appSubtitle").textContent = currentPeriod === "summer"
+                ? modality + " - Verano 2026-0"
+                : modality + " - Periodo regular (marzo/agosto)";
+        }
+
+        function updatePeriodDisplay() {
+            const isSummer = currentPeriod === "summer";
+            periodSummerBtn.classList.toggle("active", isSummer);
+            periodSummerBtn.setAttribute("aria-pressed", String(isSummer));
+            periodRegularBtn.classList.toggle("active", !isSummer);
+            periodRegularBtn.setAttribute("aria-pressed", String(!isSummer));
+            document.getElementById("periodHelp").textContent = isSummer
+                ? "Verano: matrícula S/ 182.50 y tres boletas; B1 incluye 1.5 créditos."
+                : "Periodo regular: matrícula S/ 365.00 y cinco boletas; B1 incluye la pensión regular de la categoría.";
+            document.getElementById("rowB4").style.display = isSummer ? "none" : "flex";
+            document.getElementById("rowB5").style.display = isSummer ? "none" : "flex";
+            document.getElementById("dateB1").textContent = isSummer
+                ? "Vencimiento: 15/12/2025 (Incluye Matrícula)"
+                : "Incluye matrícula + pensión regular de la categoría";
+            document.getElementById("dateB2").textContent = isSummer ? "Vencimiento: 30/01/2026" : "Cuota del saldo restante";
+            document.getElementById("dateB3").textContent = isSummer ? "Vencimiento: 27/02/2026" : "Cuota del saldo restante";
+            document.getElementById("dateB4").textContent = "Cuota del saldo restante";
+            document.getElementById("dateB5").textContent = "Cuota del saldo restante";
+            document.getElementById("totalScheduleLabel").textContent = isSummer ? "TOTAL PERÍODO" : "TOTAL SEGÚN CRONOGRAMA";
+            document.getElementById("totalScheduleDescription").textContent = isSummer
+                ? "Inversión total del verano"
+                : "Importe programado en las cinco boletas";
+            document.getElementById("sumMatricula").textContent = isSummer ? "S/. 182.50" : "S/. 365.00";
+            document.getElementById("sumTotalLabel").textContent = isSummer ? "Total" : "Total del ciclo por créditos";
+            document.getElementById("calculationNote").textContent = isSummer
+                ? "Nota: B1 incluye matrícula + 1.5 créditos."
+                : "Nota: B1 incluye matrícula + pensión regular. El saldo positivo se divide entre B2 y B5.";
+            updateHeader();
+        }
+
+        function setPeriod(period) {
+            if (period === currentPeriod) return;
+            const previousText = careerInput.value;
+            const selectedCareer = allCareers.find(c => normalizeString(c.name) === normalizeString(previousText));
+            const previousCategory = categorySelect.value;
+            const previousCredits = creditsInput.value;
+
+            currentPeriod = period;
+            closeAllLists();
+            resultsSection.style.display = "none";
+            document.getElementById("overpaymentNotice").style.display = "none";
+            updatePeriodDisplay();
+
+            if (selectedCareer) {
+                careerInput.value = selectedCareer.name;
+                currentPricingKey = selectedCareer.key;
+                updateCategories(selectedCareer.key, selectedCareer.name);
+                if (previousCategory && Array.from(categorySelect.options).some(option => option.value === previousCategory)) {
+                    categorySelect.value = previousCategory;
+                }
+                careerHelper.style.display = "flex";
+                careerInput.style.borderColor = "#2ecc71";
+                creditsInput.value = previousCredits;
+                Array.from(creditBar.children).forEach(button => {
+                    button.classList.toggle("active", button.textContent.trim() === previousCredits);
+                });
+            } else {
+                careerInput.value = previousText;
+                currentPricingKey = null;
+                categorySelect.disabled = true;
+                categorySelect.innerHTML = '<option value="">-- Seleccione carrera --</option>';
+                careerHelper.style.display = "none";
+                careerInput.style.borderColor = "#e0e0e0";
+                creditsInput.value = "";
+                Array.from(creditBar.children).forEach(button => button.classList.remove("active"));
+            }
+        }
+
+        periodSummerBtn.addEventListener("click", () => setPeriod("summer"));
+        periodRegularBtn.addEventListener("click", () => setPeriod("regular"));
+        updatePeriodDisplay();
 
         function renderCareerSuggestions(query = "") {
             closeAllLists();
@@ -768,6 +909,8 @@
             if (pricingTables[key]) {
                 for (let cat in pricingTables[key].cats) {
                     if (isDerechoWS && (cat === 'Z' || cat === '5Z')) continue;
+                    if (currentPeriod === "regular" &&
+                        (!regularPensions[key] || !Object.prototype.hasOwnProperty.call(regularPensions[key].cats, cat))) continue;
                     let option = document.createElement('option'); 
                     option.value = cat; 
                     option.textContent = `Categoría ${cat}`; 
@@ -782,6 +925,8 @@
             if (workingStudentNote) workingStudentNote.style.display = 'none';
             careerHelper.style.display = "none"; careerInput.style.borderColor = "#e0e0e0";
             resultsSection.style.display = "none";
+            const overpaymentNotice = document.getElementById("overpaymentNotice");
+            if (overpaymentNotice) overpaymentNotice.style.display = "none";
             Array.from(creditBar.children).forEach(btn => btn.classList.remove('active')); creditsInput.value = "";
         }
 
@@ -792,27 +937,78 @@
         };
 
         function calculate() {
-            const category = categorySelect.value; const credits = parseFloat(creditsInput.value);
+            const category = categorySelect.value;
+            const credits = parseFloat(creditsInput.value);
             if (!currentPricingKey || !category || isNaN(credits)) return;
+
             const table = pricingTables[currentPricingKey];
             const costPerCredit = table.cats[category];
             const totalTuition = costPerCredit * credits;
-            const b1Base = costPerCredit * 1.5;
-            let remaining = totalTuition - b1Base; if (remaining < 0) remaining = 0;
-            const total = (b1Base + MATRICULA) + remaining;
+            const matricula = currentPeriod === "regular" ? MATRICULA_REGULAR : MATRICULA;
+            let billAmounts = [];
+            let cycleTotal = 0;
+            let scheduledTotal = 0;
+            let overpayment = 0;
 
-            document.getElementById('resB1').textContent = formatCurrency(b1Base + MATRICULA);
-            document.getElementById('resB2').textContent = formatCurrency(remaining / 2);
-            document.getElementById('resB3').textContent = formatCurrency(remaining / 2);
-            document.getElementById('resTotalTop').textContent = formatCurrency(total);
+            if (currentPeriod === "summer") {
+                const firstTuitionPart = costPerCredit * 1.5;
+                let remaining = totalTuition - firstTuitionPart;
+                if (remaining < 0) remaining = 0;
+                billAmounts = [
+                    firstTuitionPart + MATRICULA,
+                    remaining / 2,
+                    remaining / 2,
+                    0,
+                    0
+                ];
+                // Se conserva la fórmula histórica del simulador de verano.
+                cycleTotal = (firstTuitionPart + MATRICULA) + remaining;
+                scheduledTotal = billAmounts.reduce((sum, amount) => sum + amount, 0);
+            } else {
+                const regularPension = regularPensions[currentPricingKey] &&
+                    regularPensions[currentPricingKey].cats[category];
+                if (typeof regularPension !== "number") return;
+
+                cycleTotal = totalTuition + MATRICULA_REGULAR;
+                const firstBillCents = Math.round((regularPension + MATRICULA_REGULAR) * 100);
+                const cycleTotalCents = Math.round(cycleTotal * 100);
+                const remainingCents = Math.max(0, cycleTotalCents - firstBillCents);
+                overpayment = Math.max(0, (firstBillCents - cycleTotalCents) / 100);
+
+                // Repartir los centavos sobrantes para que B2-B5 sumen exactamente el saldo.
+                const baseInstallmentCents = Math.floor(remainingCents / 4);
+                const extraCents = remainingCents % 4;
+                const laterBills = Array.from({ length: 4 }, (_, index) =>
+                    (baseInstallmentCents + (index < extraCents ? 1 : 0)) / 100
+                );
+                billAmounts = [(firstBillCents / 100), ...laterBills];
+                scheduledTotal = billAmounts.reduce((sum, amount) => sum + amount, 0);
+            }
+
+            const resultIds = ["resB1", "resB2", "resB3", "resB4", "resB5"];
+            resultIds.forEach((id, index) => {
+                document.getElementById(id).textContent = formatCurrency(billAmounts[index] || 0);
+            });
+
+            document.getElementById('resTotalTop').textContent = formatCurrency(scheduledTotal);
             document.getElementById('sumCareerName').textContent = careerInput.value;
             document.getElementById('sumCantCred').textContent = credits;
             document.getElementById('sumCostoCred').textContent = formatCurrency(costPerCredit);
-            document.getElementById('sumTotalBottom').textContent = formatCurrency(total);
+            document.getElementById('sumMatricula').textContent = formatCurrency(matricula);
+            document.getElementById('sumTotalBottom').textContent = formatCurrency(cycleTotal);
+
+            const overpaymentNotice = document.getElementById("overpaymentNotice");
+            if (currentPeriod === "regular" && overpayment > 0) {
+                document.getElementById("overpaymentAmount").textContent = formatCurrency(overpayment);
+                overpaymentNotice.style.display = "block";
+            } else {
+                overpaymentNotice.style.display = "none";
+            }
 
             const now = new Date();
-            document.getElementById('generatedDate').textContent = `Generado: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-            
+            document.getElementById('generatedDate').textContent = "Generado: " +
+                now.toLocaleDateString() + " " + now.toLocaleTimeString();
+
             resultsSection.style.display = 'block';
             resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
@@ -855,20 +1051,42 @@
             const originalText = "COPIAR TEXTO";
             const svgIcon = btn.querySelector('svg');
             
-            const textToCopy = `*SIMULADOR PENSIONES AC 2026-0*
------------------------------------
-🎓 Carrera: ${careerInput.value}
-📚 Créditos: ${creditsInput.value}
-🏷️ Categoría: ${categorySelect.value}
------------------------------------
-🗓️ *CRONOGRAMA:*
-• Boleta 1: ${document.getElementById('resB1').textContent} (15/Dic)
-• Boleta 2: ${document.getElementById('resB2').textContent} (30/Ene)
-• Boleta 3: ${document.getElementById('resB3').textContent} (27/Feb)
-
-💰 *TOTAL INVERSIÓN: ${document.getElementById('resTotalTop').textContent}*
------------------------------------
-Generado por herramienta interna.`;
+            const isRegular = currentPeriod === "regular";
+            const copiedBills = isRegular
+                ? [
+                    "• Boleta 1: " + document.getElementById("resB1").textContent + " (matrícula + pensión regular)",
+                    "• Boleta 2: " + document.getElementById("resB2").textContent,
+                    "• Boleta 3: " + document.getElementById("resB3").textContent,
+                    "• Boleta 4: " + document.getElementById("resB4").textContent,
+                    "• Boleta 5: " + document.getElementById("resB5").textContent
+                ]
+                : [
+                    "• Boleta 1: " + document.getElementById("resB1").textContent + " (15/Dic)",
+                    "• Boleta 2: " + document.getElementById("resB2").textContent + " (30/Ene)",
+                    "• Boleta 3: " + document.getElementById("resB3").textContent + " (27/Feb)"
+                ];
+            const amountDetails = isRegular
+                ? "💰 *TOTAL SEGÚN CRONOGRAMA: " + document.getElementById("resTotalTop").textContent + "*\n📚 *COSTO DEL CICLO POR CRÉDITOS: " + document.getElementById("sumTotalBottom").textContent + "*"
+                : "💰 *TOTAL INVERSIÓN: " + document.getElementById("sumTotalBottom").textContent + "*";
+            const refundDetails = isRegular && document.getElementById("overpaymentNotice").style.display !== "none"
+                ? "\n⚠️ Pago en exceso: " + document.getElementById("overpaymentAmount").textContent +
+                    ". El alumno debe solicitar la devolución en las fechas correspondientes: https://explora.upc.edu.pe/77774-devolucion-de-pagos/como-solicito-una-devolucion-de-pago"
+                : "";
+            const textToCopy = [
+                "*SIMULADOR PENSIONES AC*",
+                "Periodo: " + (isRegular ? "Regular (marzo/agosto)" : "Verano 2026-0"),
+                "-----------------------------------",
+                "🎓 Carrera: " + careerInput.value,
+                "📚 Créditos: " + creditsInput.value,
+                "🏷️ Categoría: " + categorySelect.value,
+                "-----------------------------------",
+                "🗓️ *CRONOGRAMA:*",
+                copiedBills.join("\n"),
+                "",
+                amountDetails + refundDetails,
+                "-----------------------------------",
+                "Generado por herramienta interna."
+            ].join("\n");
 
             try {
                 await navigator.clipboard.writeText(textToCopy);
