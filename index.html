@@ -495,10 +495,10 @@
             <div class="manual-grid">
                 <div class="form-group"><label for="manualCareer">Carrera o concepto</label><input id="manualCareer" class="form-control" type="text" placeholder="Ej. Contabilidad y Administración"></div>
                 <div class="form-group"><label for="manualCategory">Categoría de pago</label><input id="manualCategory" class="form-control" type="text" placeholder="Ej. U (opcional)"></div>
-                <div class="form-group"><label for="manualCredits">Cantidad de créditos</label><input id="manualCredits" class="form-control" type="number" min="0" step="1" value="0"></div>
+                <div class="form-group"><label for="manualCredits">Cantidad de créditos</label><input id="manualCredits" class="form-control" type="number" min="0" step="1" value=""></div>
                 <div class="form-group"><label for="manualMatricula">Costo de matrícula (S/)</label><input id="manualMatricula" class="form-control" type="number" min="0" step="0.01" value="365.00"></div>
-                <div class="form-group"><label for="manualCostPerCredit">Costo por crédito (S/)</label><input id="manualCostPerCredit" class="form-control" type="number" min="0" step="0.01" value="0.00"></div>
-                <div class="form-group"><label for="manualRegularPension">Pensión regular de referencia (S/)</label><input id="manualRegularPension" class="form-control" type="number" min="0" step="0.01" value="0.00"></div>
+                <div class="form-group"><label for="manualCostPerCredit">Costo por crédito (S/)</label><input id="manualCostPerCredit" class="form-control" type="number" min="0" step="0.01" value=""></div>
+                <div class="form-group"><label for="manualRegularPension">Pensión regular de referencia (S/)</label><input id="manualRegularPension" class="form-control" type="number" min="0" step="0.01" value=""></div>
                 <div class="form-group"><label for="manualFormula">Plantilla para la primera boleta</label>
                     <select id="manualFormula" class="form-control">
                         <option value="matricula_regular" selected>Matrícula + pensión regular</option>
@@ -965,12 +965,12 @@
             if(period==="manual"){
                 if(!manualInitialized){
                     manualInitialized=true;manualCareer.value=selectedCareer?selectedCareer.name:"";
-                    manualCategory.value=previousCategory||"";manualCredits.value=previousCredits||"0";
+                    manualCategory.value=previousCategory||"";manualCredits.value=previousCredits||"";
                     manualMatricula.value=(previousPeriod==="summer"?MATRICULA:MATRICULA_REGULAR).toFixed(2);
                     const rate=selectedCareer&&previousCategory&&pricingTables[selectedCareer.key]?pricingTables[selectedCareer.key].cats[previousCategory]:null;
                     const pension=selectedCareer&&previousCategory&&regularPensions[selectedCareer.key]?regularPensions[selectedCareer.key].cats[previousCategory]:null;
-                    manualCostPerCredit.value=rate==null?"0.00":Number(rate).toFixed(2);
-                    manualRegularPension.value=pension==null?"0.00":Number(pension).toFixed(2);
+                    manualCostPerCredit.value=rate==null?"":Number(rate).toFixed(2);
+                    manualRegularPension.value=pension==null?"":Number(pension).toFixed(2);
                 }
                 return;
             }
@@ -1075,8 +1075,23 @@
         };
 
         function getManualCalculationData(showErrors=true){
-            const credits=Number(manualCredits.value),matricula=Number(manualMatricula.value),costPerCredit=Number(manualCostPerCredit.value),regularPension=Number(manualRegularPension.value);
-            const hasOverride=manualUseCycleTotalOverride.checked,overrideValue=manualCycleTotal.value.trim()===""?NaN:Number(manualCycleTotal.value);
+            const rawCredits=manualCredits.value.trim(),rawMatricula=manualMatricula.value.trim();
+            const rawRate=manualCostPerCredit.value.trim(),rawPension=manualRegularPension.value.trim();
+            const hasOverride=manualUseCycleTotalOverride.checked;
+            const overrideValue=manualCycleTotal.value.trim()===""?NaN:Number(manualCycleTotal.value);
+            if(rawMatricula===""||(!hasOverride&&(rawCredits===""||rawRate===""))){
+                if(showErrors){
+                    manualAlert.textContent=rawMatricula===""
+                        ?"Ingresa el costo de matrícula. Si es gratuito en este caso, escribe 0."
+                        :"Completa créditos y costo por crédito, o activa la opción para definir manualmente el total del ciclo. Escribe 0 solo si ese valor aplica realmente.";
+                    manualAlert.style.display="block";
+                }
+                return null;
+            }
+            const credits=rawCredits===""?0:Number(rawCredits);
+            const matricula=Number(rawMatricula);
+            const costPerCredit=rawRate===""?0:Number(rawRate);
+            const regularPension=rawPension===""?0:Number(rawPension);
             if([credits,matricula,costPerCredit,regularPension].some(value=>!Number.isFinite(value)||value<0)){
                 if(showErrors){manualAlert.textContent="Revisa créditos, matrícula, costo por crédito y pensión regular. Los valores deben ser números iguales o mayores que cero.";manualAlert.style.display="block";}
                 return null;
@@ -1090,8 +1105,17 @@
         }
 
         function applyManualTemplate(){
+            const formula=manualFormula.value;
+            if(formula==="matricula_regular"&&manualRegularPension.value.trim()===""){
+                manualAlert.textContent="Para usar la plantilla «Matrícula + pensión regular», ingresa primero la pensión regular de referencia. Si corresponde a S/ 0.00, escríbelo explícitamente.";
+                manualAlert.style.display="block";manualRegularPension.focus();return;
+            }
+            if(formula==="matricula_1_5_credit"&&manualCostPerCredit.value.trim()===""){
+                manualAlert.textContent="Para usar la plantilla «Matrícula + 1.5 créditos», ingresa primero el costo por crédito. Si corresponde a S/ 0.00, escríbelo explícitamente.";
+                manualAlert.style.display="block";manualCostPerCredit.focus();return;
+            }
             const data=getManualCalculationData(true);if(!data)return;manualAlert.style.display="none";
-            const firstInput=document.getElementById("manualAmount1"),formula=manualFormula.value;let firstAmount;
+            const firstInput=document.getElementById("manualAmount1");let firstAmount;
             if(formula==="matricula_1_5_credit"){firstAmount=data.matricula+data.costPerCredit*1.5;firstInput.value=firstAmount.toFixed(2);}
             else if(formula==="matricula_regular"){firstAmount=data.matricula+data.regularPension;firstInput.value=firstAmount.toFixed(2);}
             else if(formula==="matricula_only"){firstAmount=data.matricula;firstInput.value=firstAmount.toFixed(2);}
@@ -1264,8 +1288,8 @@
             if(resultsSection.style.display==="block"&&currentPeriod==="manual")calculateManual();
         });
         function resetManualForm(){
-            manualCareer.value="";manualCategory.value="";manualCredits.value="0";manualMatricula.value=MATRICULA_REGULAR.toFixed(2);
-            manualCostPerCredit.value="0.00";manualRegularPension.value="0.00";manualFormula.value="matricula_regular";
+            manualCareer.value="";manualCategory.value="";manualCredits.value="";manualMatricula.value=MATRICULA_REGULAR.toFixed(2);
+            manualCostPerCredit.value="";manualRegularPension.value="";manualFormula.value="matricula_regular";
             manualInstallmentCount.value="5";manualDistribution.value="equal";manualUseCycleTotalOverride.checked=false;
             manualCycleTotal.value="";manualCycleTotal.disabled=true;manualNotes.value="";manualAlert.style.display="none";
             for(let i=1;i<=12;i++){
