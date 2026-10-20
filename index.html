@@ -65,7 +65,18 @@
         .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
         
         .form-group { display: flex; flex-direction: column; position: relative; z-index: 1; }
-        .form-group.career-group { z-index: 100; } 
+        .form-group.career-group { z-index: 100; }
+
+        .career-filter-buttons { display: flex; gap: 8px; margin-bottom: 12px; }
+        .career-filter-btn {
+            flex: 1; padding: 10px 12px; border: 1px solid var(--border-color);
+            border-radius: 7px; background: white; color: var(--text-light);
+            font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .career-filter-btn:hover { border-color: var(--upc-red); color: var(--upc-red); }
+        .career-filter-btn.active { background: var(--upc-red); border-color: var(--upc-red); color: white; }
+        .career-filter-btn:focus-visible { outline: 2px solid var(--upc-red); outline-offset: 2px; } 
         
         .form-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
@@ -232,8 +243,13 @@
 
         <div class="controls-grid">
             <div class="form-group career-group">
-                <label for="careerInput">1. Carrera Profesional</label>
-                <input type="text" id="careerInput" class="form-control" placeholder="Escribe para buscar..." autocomplete="off">
+                <label>1. Tipo de carrera</label>
+                <div class="career-filter-buttons" role="group" aria-label="Filtrar carreras por modalidad">
+                    <button type="button" id="filterPregradoBtn" class="career-filter-btn active" aria-pressed="true">Pregrado</button>
+                    <button type="button" id="filterWorkingStudentBtn" class="career-filter-btn" aria-pressed="false">Working Student</button>
+                </div>
+                <label for="careerInput">Carrera profesional</label>
+                <input type="text" id="careerInput" class="form-control" placeholder="Busca una carrera de Pregrado..." autocomplete="off">
                 <div id="autocomplete-list" class="autocomplete-items"></div>
                 <div id="careerHelper" class="helper-text">
                     <svg class="icon-sm" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Carrera identificada
@@ -476,14 +492,41 @@
         const careerHelper = document.getElementById('careerHelper');
         let currentPricingKey = null;
         let currentFocus = -1;
+        let currentCareerFilter = "pregrado";
+
+        const filterPregradoBtn = document.getElementById("filterPregradoBtn");
+        const filterWorkingStudentBtn = document.getElementById("filterWorkingStudentBtn");
 
         function normalizeString(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+
+        function setCareerFilter(filter) {
+            currentCareerFilter = filter;
+            const isPregrado = filter === "pregrado";
+            filterPregradoBtn.classList.toggle("active", isPregrado);
+            filterPregradoBtn.setAttribute("aria-pressed", String(isPregrado));
+            filterWorkingStudentBtn.classList.toggle("active", !isPregrado);
+            filterWorkingStudentBtn.setAttribute("aria-pressed", String(!isPregrado));
+            careerInput.placeholder = isPregrado
+                ? "Busca una carrera de Pregrado..."
+                : "Busca una carrera de Working Student...";
+            careerInput.value = "";
+            closeAllLists();
+            resetUIState();
+        }
+
+        filterPregradoBtn.addEventListener("click", () => setCareerFilter("pregrado"));
+        filterWorkingStudentBtn.addEventListener("click", () => setCareerFilter("working_student"));
 
         careerInput.addEventListener('input', function() {
             closeAllLists(); resetUIState();
             const val = this.value; if (!val) return;
             currentFocus = -1; const cleanVal = normalizeString(val);
-            const matches = allCareers.filter(c => normalizeString(c.name).includes(cleanVal));
+            const matches = allCareers.filter(c => {
+                const belongsToFilter = currentCareerFilter === "working_student"
+                    ? c.key === "working_student"
+                    : c.key !== "working_student";
+                return belongsToFilter && normalizeString(c.name).includes(cleanVal);
+            });
             
             matches.forEach(match => {
                 let item = document.createElement("div");
