@@ -512,6 +512,8 @@
 
         function resetUIState() {
             currentPricingKey = null; categorySelect.disabled = true; categorySelect.innerHTML = '<option value="">-- Seleccione Carrera --</option>';
+            const workingStudentNote = document.getElementById('workingStudentNote');
+            if (workingStudentNote) workingStudentNote.style.display = 'none';
             careerHelper.style.display = "none"; careerInput.style.borderColor = "#e0e0e0";
             resultsSection.style.display = "none";
             Array.from(creditBar.children).forEach(btn => btn.classList.remove('active')); creditsInput.value = "";
